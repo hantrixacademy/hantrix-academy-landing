@@ -1747,13 +1747,22 @@ svg {
   }
 
   /* testimonials carousel: smaller on mobile */
+  /* Zero the section side padding so the gallery is exactly full screen width
+     and perfectly centered (no vw/calc drift → symmetric left & right bleed).
+     The heading gets its own padding back below. */
+  .testimonials {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .testimonials__head {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
   .testimonials__gallery {
     height: 520px;
-    /* Break out of the section padding to full screen width so the 1st/last
-       phones bleed to the very edges of the screen, then clip so there is no
-       horizontal page scroll on phones. */
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
+    width: 100%;
+    margin-left: 0;
+    /* clip so the edge phones bleed to the screen sides without page scroll */
     overflow-x: clip;
   }
   .phone {
