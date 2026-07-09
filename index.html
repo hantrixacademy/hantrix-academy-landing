@@ -896,7 +896,8 @@
       io.observe(section);
     })();
 
-    // Testimonials coverflow carousel — auto-advances, each phone slides to center
+    // Testimonials carousel — desktop: discrete coverflow (auto-advance + click).
+    // Mobile: continuous momentum coverflow (drag/flick inertia, snap, infinite loop).
     (function () {
       const gallery = document.querySelector('.testimonials__gallery');
       if (!gallery) return;
@@ -904,60 +905,147 @@
       const n = phones.length;
       if (n < 2) return;
 
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let active = Math.floor(n / 2); // start with the middle phone centered
-      const prev = {};
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const mqMobile = window.matchMedia('(max-width: 640px)');
+      const now = function () { return (window.performance && performance.now) ? performance.now() : Date.now(); };
 
-      function isMobile() { return window.innerWidth <= 640; }
-
-      function styleFor(off) {
-        const a = Math.abs(off);
-        if (a === 0) return { s: 1, o: 1, z: 30 };
-        if (a === 1) return { s: 0.78, o: 1, z: 20 };
-        return { s: 0.6, o: 0.42, z: 10 };
+      // Position/scale/opacity for a phone whose (wrapped) offset from centre is `rel`.
+      // Continuous formula that matches the original discrete anchors at rel = 0,1,2.
+      function setPhone(p, rel, gap) {
+        const a = Math.abs(rel), sign = rel < 0 ? -1 : 1;
+        const px = a <= 1 ? sign * gap * a : sign * (gap + gap * 0.78 * (a - 1));
+        const sc = a <= 1 ? 1 - 0.22 * a : Math.max(0.6, 0.78 - 0.18 * (a - 1));
+        const op = a <= 1 ? 1 : Math.max(0.42, 1 - 0.58 * (a - 1));
+        p.style.transform = 'translate(-50%, -50%) translate3d(' + px.toFixed(2) + 'px,0,0) scale(' + sc.toFixed(3) + ')';
+        p.style.opacity = op.toFixed(2);
+        p.style.zIndex = String(Math.max(1, Math.round(30 - a * 10)));
       }
+      function wrap(rel) { return rel - n * Math.round(rel / n); } // → infinite loop
 
-      function layout() {
-        const gap = isMobile() ? 210 : 355;
-        // outer phones sit closer to their neighbours (non-linear spacing)
-        function posFor(off) {
-          if (off === 0) return 0;
-          const sign = off < 0 ? -1 : 1;
-          return Math.abs(off) === 1 ? sign * gap : sign * gap * 1.78;
+      /* ---------------- DESKTOP: discrete auto-advance ---------------- */
+      var deskTimer = null, active = Math.floor(n / 2), prevOff = {};
+      function deskRender() {
+        for (var i = 0; i < n; i++) {
+          var rel = wrap(i - active);
+          var p = phones[i];
+          var teleport = prevOff[i] !== undefined && Math.abs(rel - prevOff[i]) > 1;
+          if (teleport) p.style.transition = 'none';        // jump across the wrap, don't slide
+          setPhone(p, rel, 355);
+          if (teleport) { void p.offsetWidth; p.style.transition = ''; }
+          prevOff[i] = rel;
         }
-        phones.forEach(function (p, i) {
-          let off = ((i - active) % n + n) % n;
-          if (off > n / 2) off -= n; // wrap to symmetric range around 0
-          const wrapped = prev[i] !== undefined && Math.abs(off - prev[i]) > 1;
-          const st = styleFor(off);
-          if (wrapped) p.style.transition = 'none'; // teleport across the wrap, don't slide
-          p.style.transform =
-            'translate(-50%, -50%) translateX(' + posFor(off) + 'px) scale(' + st.s + ')';
-          p.style.opacity = st.o;
-          p.style.zIndex = st.z;
-          if (wrapped) { void p.offsetWidth; p.style.transition = ''; }
-          prev[i] = off;
-        });
+      }
+      function deskStart() { deskStop(); if (reduceMotion) return; deskTimer = setInterval(function () { active = (active + 1) % n; deskRender(); }, 3000); }
+      function deskStop() { if (deskTimer) { clearInterval(deskTimer); deskTimer = null; } }
+      function deskClick() { active = phones.indexOf(this); deskRender(); deskStart(); }
+      function deskEnable() {
+        active = Math.floor(n / 2); prevOff = {};
+        phones.forEach(function (p) { p.style.transition = ''; p.addEventListener('click', deskClick); });
+        gallery.addEventListener('mouseenter', deskStop);
+        gallery.addEventListener('mouseleave', deskStart);
+        deskRender(); deskStart();
+      }
+      function deskDisable() {
+        deskStop();
+        phones.forEach(function (p) { p.removeEventListener('click', deskClick); });
+        gallery.removeEventListener('mouseenter', deskStop);
+        gallery.removeEventListener('mouseleave', deskStart);
       }
 
-      layout();
+      /* ---------------- MOBILE: continuous momentum coverflow ---------------- */
+      var GAP = 210, AUTO = 0.006, FRICTION = 0.93, SNAP_K = 0.16, RESUME_MS = 2500;
+      var pos = Math.floor(n / 2), vel = 0, state = 'auto', snapTo = 0;
+      var raf = null, resumeTimer = null;
+      var dragging = false, decided = false, sx = 0, sy = 0, sPos = 0, lastX = 0, lastT = 0;
 
-      let timer = null;
-      function start() {
-        stop();
-        timer = setInterval(function () { active = (active + 1) % n; layout(); }, 3000);
+      function mRender() { for (var i = 0; i < n; i++) setPhone(phones[i], wrap(i - pos), GAP); }
+      function scheduleResume() { clearTimeout(resumeTimer); resumeTimer = setTimeout(function () { state = 'auto'; }, RESUME_MS); }
+
+      function loop() {
+        if (!dragging) {
+          if (state === 'auto') {
+            pos += AUTO;                                       // slow continuous R→L
+          } else if (state === 'momentum') {
+            pos += vel; vel *= FRICTION;
+            if (Math.abs(vel) < 0.006) { snapTo = Math.round(pos); state = 'snap'; }
+          } else if (state === 'snap') {
+            pos += (snapTo - pos) * SNAP_K;                    // ease-out to nearest card
+            if (Math.abs(snapTo - pos) < 0.002) { pos = snapTo; state = 'paused'; scheduleResume(); }
+          }
+          if (pos > 1e6 || pos < -1e6) pos = ((pos % n) + n) % n;
+          mRender();
+        }
+        raf = requestAnimationFrame(loop);
       }
-      function stop() { if (timer) { clearInterval(timer); timer = null; } }
 
-      start();
-      gallery.addEventListener('mouseenter', stop);
-      gallery.addEventListener('mouseleave', start);
-      window.addEventListener('resize', layout);
+      function onDown(e) {
+        dragging = false; decided = false;
+        sx = e.clientX; sy = e.clientY; sPos = pos; lastX = e.clientX; lastT = e.timeStamp || now();
+        clearTimeout(resumeTimer);
+        state = 'paused';                                      // hold while the finger is down
+        window.addEventListener('pointermove', onMove, { passive: true });
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
+      }
+      function onMove(e) {
+        var dx = e.clientX - sx, dy = e.clientY - sy;
+        if (!decided) {
+          if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+          decided = true;
+          dragging = Math.abs(dx) > Math.abs(dy);              // horizontal → drag; vertical → let page scroll
+          if (!dragging) { cleanup(); scheduleResume(); return; }
+        }
+        if (!dragging) return;
+        pos = sPos - dx / GAP;
+        var t = e.timeStamp || now(), dt = Math.max(1, t - lastT);
+        vel = ((lastX - e.clientX) / GAP) / dt * 16;           // cards per frame
+        lastX = e.clientX; lastT = t;
+        mRender();
+      }
+      function onUp() {
+        cleanup();
+        if (dragging) {
+          if (vel > 0.9) vel = 0.9; if (vel < -0.9) vel = -0.9;
+          if (Math.abs(vel) > 0.01) { state = 'momentum'; } else { snapTo = Math.round(pos); state = 'snap'; }
+        } else {
+          scheduleResume();
+        }
+        dragging = false;
+      }
+      function cleanup() {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+      }
+      function mobEnable() {
+        pos = Math.floor(n / 2); vel = 0; state = 'auto';
+        phones.forEach(function (p) { p.style.transition = 'none'; }); // JS animates every frame
+        gallery.style.touchAction = 'pan-y';                   // horizontal → us, vertical → page scroll
+        gallery.style.cursor = 'grab';
+        gallery.addEventListener('pointerdown', onDown);
+        mRender();
+        if (!raf) raf = requestAnimationFrame(loop);
+      }
+      function mobDisable() {
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+        clearTimeout(resumeTimer); cleanup();
+        gallery.removeEventListener('pointerdown', onDown);
+        gallery.style.touchAction = ''; gallery.style.cursor = '';
+        phones.forEach(function (p) { p.style.transition = ''; });
+      }
 
-      // click a phone to bring it to the center
-      phones.forEach(function (p, i) {
-        p.addEventListener('click', function () { active = i; layout(); start(); });
-      });
+      /* ---------------- switch modes at the breakpoint ---------------- */
+      var isMob = null;
+      function apply() {
+        var m = mqMobile.matches;
+        if (m === isMob) return;
+        if (isMob === true) mobDisable(); else if (isMob === false) deskDisable();
+        isMob = m;
+        if (m) mobEnable(); else deskEnable();
+      }
+      apply();
+      if (mqMobile.addEventListener) mqMobile.addEventListener('change', apply);
+      else mqMobile.addListener(apply);
     })();
 
     // Footer — staggered premium reveal, once when ~20% enters the viewport
