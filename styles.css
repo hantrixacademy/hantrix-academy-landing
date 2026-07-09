@@ -44,10 +44,9 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Root guard: scroll-reveal transforms + the coverflow testimonial phones
-     bleed past the edge by design. `clip` contains them so there is never a
-     horizontal scrollbar on any screen, while keeping position:sticky working. */
-  overflow-x: clip;
+  /* No overflow-x guard on the root — it breaks the sticky navbar and the
+     sticky pricing card. Horizontal overflow is contained at its sources
+     instead (testimonials gallery clip + vertical-only reveals on mobile). */
 }
 
 body {
@@ -56,9 +55,8 @@ body {
   color: var(--text);
   display: flex;
   justify-content: center;
-  /* guard: never allow horizontal scroll on any screen size.
-     `clip` (not hidden) keeps position:sticky working. */
-  overflow-x: clip;
+  /* NOTE: do NOT set overflow-x here — combined with the root's overflow-x
+     it breaks the sticky navbar. The horizontal-scroll guard lives on <html>. */
 }
 
 img {
@@ -1171,6 +1169,9 @@ button {
   position: relative;
   width: 100%;
   height: 800px;
+  /* contain the coverflow phones that bleed past the edges (no sticky
+     descendant here, so clipping does not affect the sticky navbar/pricing) */
+  overflow-x: clip;
 }
 .phone {
   position: absolute;
@@ -1864,6 +1865,14 @@ svg {
   /* footer — mobile footer handles its own padding */
   footer {
     padding: 0 !important;
+  }
+
+  /* On phones a full-width element translated sideways for the reveal spills
+     past the screen edge → horizontal scroll. Reveal vertically instead so
+     nothing overflows (no root overflow guard needed → sticky navbar works). */
+  .reveal--left,
+  .reveal--right {
+    transform: translateY(34px);
   }
 }
 
