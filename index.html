@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hantrix Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Frame 38 — page container -->
+  <main class="page">
+
+    <!-- ===== Section 1 — Navbar (Frame 14) ===== -->
+    <header class="navbar">
+      <div class="navbar__inner">
+        <!-- Logo -->
+        <a class="logo" href="#">
+          <img class="logo__img" src="assets/logo.png" alt="Hantrix Academy" />
+        </a>
+
+        <!-- Nav links -->
+        <nav>
+          <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Student</a></li>
+            <li><a href="#">Journey</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <!-- CTA -->
+        <button class="btn btn-primary navbar__cta" onclick="location.href='checkout.html'">Join Now</button>
+
+        <!-- Mobile hamburger -->
+        <button class="navbar__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Mobile dropdown menu -->
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="#">Home</a>
+        <a href="#">Student</a>
+        <a href="#">Journey</a>
+        <a href="#">Pricing</a>
+        <a href="#">FAQ</a>
+        <button class="btn btn-primary" onclick="location.href='checkout.html'">Join Now</button>
+      </div>
+    </header>
+
+    <!-- ===== Section 2 — Hero (Frame 38) ===== -->
+    <section class="hero">
+      <div class="hero__intro">
+        <div class="hero__eyebrow-wrap">
+          <span class="hero__badge">
+            <span class="hero__badge-flag">🇮🇳</span>
+            India's First International Dropshipping Academy
+          </span>
+        </div>
+
+        <div class="hero__text">
+          <h1 class="h1 hero__title">Learn International Dropshipping From Industry Experts</h1>
+          <p class="subheading">
+            Get trained by experienced ecommerce professionals who have<br />
+            built and scaled brands in international markets.
+          </p>
+        </div>
+
+        <div class="hero__buttons">
+          <button class="btn btn-primary" onclick="location.href='checkout.html'">Get Started</button>
+          <button class="btn btn-outline" onclick="location.href='checkout.html'">Enroll Now</button>
+        </div>
+      </div>
+
+      <!-- Video (same player as checkoutpagehantrix) -->
+      <div class="hero__video">
+        <div class="hero__video-inner">
+          <video controls playsinline webkit-playsinline preload="metadata">
+            <source src="https://pub-c2b4c1f32995479e861f271ed9e7f25b.r2.dev/Anirudh%20Landing%20Pravil%204K.mp4#t=0.001" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 3 — Platforms (Frame 2147243743) ===== -->
+    <section class="section platforms">
+      <div class="section__inner platforms__inner">
+        <div class="platforms__top">
+          <h2 class="h2 platforms__heading">Learn With Industry-Leading<br />Ecommerce Platforms</h2>
+          <div class="platforms__illustration">
+            <img src="assets/illustration-thumbsup.png" alt="" />
+          </div>
+        </div>
+
+        <div class="platforms__logos">
+          <div class="platforms__ticker">
+            <!-- group 1 -->
+            <div class="ticker-group">
+              <span class="plogo plogo--meta"><img src="assets/meta.png" alt="Meta" /></span>
+              <span class="plogo plogo--insta"><img src="assets/instagram.png" alt="Instagram" /></span>
+              <span class="plogo plogo--tiktok"><img src="assets/tiktok.png" alt="TikTok" /></span>
+              <span class="plogo plogo--stripe"><img src="assets/stripe.png" alt="Stripe" /></span>
+              <span class="plogo plogo--shopify"><img src="assets/shopify.png" alt="Shopify" /></span>
+            </div>
+            <!-- group 2 (duplicate for seamless loop) -->
+            <div class="ticker-group" aria-hidden="true">
+              <span class="plogo plogo--meta"><img src="assets/meta.png" alt="" /></span>
+              <span class="plogo plogo--insta"><img src="assets/instagram.png" alt="" /></span>
+              <span class="plogo plogo--tiktok"><img src="assets/tiktok.png" alt="" /></span>
+              <span class="plogo plogo--stripe"><img src="assets/stripe.png" alt="" /></span>
+              <span class="plogo plogo--shopify"><img src="assets/shopify.png" alt="" /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 4 — Pain Points (Frame 2147243736) ===== -->
+    <section class="section painpoints">
+      <div class="section__inner painpoints__inner">
+        <h2 class="h2">Why Most Beginners Fail At<br />International Dropshipping</h2>
+
+        <div class="painpoints__row">
+          <!-- Left: The Result? -->
+          <div class="pain-card painpoints__result-card">
+            <div class="painpoints__girl">
+              <img src="assets/pain-girl.png" alt="Frustrated beginner" />
+            </div>
+            <div class="result-box">
+              <div class="result-box__head">
+                <p class="result-box__title">The Result?</p>
+                <span class="result-box__divider"></span>
+              </div>
+              <ul class="result-box__list">
+                <li>Months of effort</li>
+                <li>No Profitable Store</li>
+                <li>Giving Up Too Soon</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Right: Most Beginners Make These Mistakes -->
+          <div class="pain-card painpoints__mistakes-card">
+            <h3 class="painpoints__mistakes-title">Most Beginners Make These Mistakes</h3>
+            <div class="mistakes">
+              <div class="mistakes__glow" aria-hidden="true">
+                <img src="assets/mistakes-glow.svg" alt="" />
+              </div>
+              <div class="mistakes__row">
+                <div class="mistake">
+                  <div class="mistake__inner">
+                    <span class="mistake__icon"><img src="assets/close-x.svg" alt="" /></span>
+                    <p>Pick Saturated Products</p>
+                  </div>
+                </div>
+                <div class="mistake">
+                  <div class="mistake__inner">
+                    <span class="mistake__icon"><img src="assets/close-x.svg" alt="" /></span>
+                    <p>Following Outdated Gurus</p>
+                  </div>
+                </div>
+                <div class="mistake">
+                  <div class="mistake__inner">
+                    <span class="mistake__icon"><img src="assets/close-x.svg" alt="" /></span>
+                    <p>Ignoring Market Research</p>
+                  </div>
+                </div>
+                <div class="mistake">
+                  <div class="mistake__inner">
+                    <span class="mistake__icon"><img src="assets/close-x.svg" alt="" /></span>
+                    <p>Build Stores That Don't Convert</p>
+                  </div>
+                </div>
+                <div class="mistake">
+                  <div class="mistake__inner">
+                    <span class="mistake__icon"><img src="assets/close-x.svg" alt="" /></span>
+                    <p>Run Ads Without Strategy</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 5 — Live Call Schedule (Frame 47) ===== -->
+    <section class="section liveschedule">
+      <div class="section__inner liveschedule__inner">
+        <div class="liveschedule__head">
+          <h2 class="h2">Confused Right Now?<br />Get Clarity On Tomorrow's Call</h2>
+          <p class="subheading liveschedule__subtext">
+            No other course at this price in India gives you this. Six days a week, real-time, with the person who's
+            actually done it. This is why Hantrix students launch stores - and why they don't quit.
+          </p>
+        </div>
+
+        <div class="liveschedule__illustration">
+          <img src="assets/live-phone.png" alt="Person reviewing on a call" />
+        </div>
+
+        <!-- Schedule grid (Frame 65) -->
+        <div class="schedule">
+          <div class="schedule__row">
+            <div class="day-card">
+              <span class="day-card__day">Mon</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+            <div class="day-card">
+              <span class="day-card__day">Tue</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+            <div class="day-card">
+              <span class="day-card__day">Wed</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+            <div class="day-card">
+              <span class="day-card__day">Thu</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+          </div>
+          <div class="schedule__row">
+            <div class="day-card">
+              <span class="day-card__day">Fri</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+            <div class="day-card">
+              <span class="day-card__day">Sat</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--live">LIVE</span>
+            </div>
+            <div class="day-card day-card--rest">
+              <span class="day-card__day">Sun</span>
+              <span class="day-card__divider"></span>
+              <span class="day-card__status day-card__status--rest">REST</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 6 — Comparison Table (Frame 2147243735) ===== -->
+    <section class="section comparison">
+      <div class="section__inner comparison__inner">
+        <div class="comparison__head">
+          <h2 class="h2">What Makes Hantrix Different<br />From Competitors?</h2>
+          <p class="subheading comparison__subtext">
+            Most courses sell theory. We hand you the real system we use to ship to the US, UK and AU.
+          </p>
+        </div>
+
+        <div class="comparison__cards">
+          <!-- What Others Offer -->
+          <div class="cmp-card cmp-card--others">
+            <div class="cmp-card__header cmp-card__header--grey">What Others Offer</div>
+            <ul class="cmp-list">
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>Pre-Recorded Videos Only</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>Generic Dropshipping Strategies</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>Learn Alone Without Support</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>No Live Mentor Access</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>Outdated Course Content</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>Theory Without Implementation</li>
+              <li><span class="cmp-icon cmp-icon--x"><img src="assets/close-x.svg" alt="" /></span>No Real Accountability</li>
+            </ul>
+          </div>
+
+          <!-- What Hantrix Offer -->
+          <div class="cmp-card cmp-card--hantrix">
+            <div class="cmp-card__header cmp-card__header--orange">What Hantrix Offer</div>
+            <ul class="cmp-list">
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>6 Live Mentorship Calls Every Week</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Proven International Dropshipping Framework</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Direct Access To Experienced Mentors</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Store Reviews &amp; Personalized Feedback</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Active Community Of Entrepreneurs</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Step-By-Step Execution Roadmap</li>
+              <li><span class="cmp-icon cmp-icon--check"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Ongoing Support Until You Succeed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 8 — Testimonials (Frame 2147243732) ===== -->
+    <!-- NOTE: Section 7 (Community/Support — Frame 49) goes ABOVE this once provided -->
+    <section class="section testimonials">
+      <div class="section__inner testimonials__inner">
+        <div class="testimonials__head">
+          <h2 class="h2">Real Stories Real Results That<br />Inspire Real Change</h2>
+          <p class="subheading">
+            Discover how our students transformed their skills, careers,<br />
+            and lives through practical learning.
+          </p>
+        </div>
+
+        <div class="testimonials__gallery">
+          <!-- far left (Mustafa) -->
+          <div class="phone phone--l2">
+            <img src="assets/phone-l2.png" alt="Mustafa — student testimonial" />
+          </div>
+          <!-- left-center (Saahil) -->
+          <div class="phone phone--l1">
+            <img src="assets/phone-l1.png" alt="Saahil — student testimonial" />
+          </div>
+          <!-- center (Praveen) — hero -->
+          <div class="phone phone--center">
+            <img src="assets/phone-center.png" alt="Praveen Drop — student testimonial" />
+          </div>
+          <!-- right-center (Tom) -->
+          <div class="phone phone--r1">
+            <img src="assets/phone-r1.png" alt="Tom Drop — student testimonial" />
+          </div>
+          <!-- far right (Vishnu) -->
+          <div class="phone phone--r2">
+            <img src="assets/phone-r2.png" alt="Vishnu — student testimonial" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 9 — Pricing / Curriculum (Frame 51) ===== -->
+    <section class="section pricing">
+      <div class="section__inner pricing__inner">
+        <div class="pricing__head">
+          <h2 class="h2">Start Your Dropshipping Journey<br />With Hantrix</h2>
+          <p class="subheading pricing__subtext">
+            Learn step-by-step dropshipping, ads, and store setup to launch<br />and scale your online business successfully
+          </p>
+        </div>
+
+        <div class="pricing__cols">
+          <!-- LEFT: Join Hantrix Today -->
+          <div class="pricing__left">
+            <div class="join-group">
+            <div class="join-card join-card--top">
+              <div class="join-card__head">
+                <h3 class="join-card__title">Join Hantrix Today</h3>
+                <span class="join-card__divider"></span>
+              </div>
+
+              <div class="join-features">
+                <span class="feature-pill">
+                  <img src="assets/ic-video.svg" width="24" height="24" alt="" />
+                  Special Weekly Live Call Sessions
+                </span>
+                <div class="feature-row">
+                  <span class="feature-pill">
+                    <img src="assets/ic-lifetime.svg" width="24" height="24" alt="" />
+                    Lifetime access
+                  </span>
+                  <span class="feature-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"><path d="M4 12a8 8 0 0113.7-5.6L20 8M20 4.5V8h-3.5M20 12a8 8 0 01-13.7 5.6L4 16M4 19.5V16h3.5"/></svg>
+                    Future updates
+                  </span>
+                </div>
+                <span class="feature-pill">
+                  <img src="assets/ic-discord.svg" width="24" height="24" alt="" />
+                  Discord Community Access
+                </span>
+              </div>
+            </div>
+
+            <div class="join-card join-card--bottom">
+              <ul class="join-checklist">
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />Daily live doubt-clearing calls Monday to Saturday</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />Led by instructors with $80K+ in real ad spend</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />India-specific Wise, Stripe, Mercury, LLC setup included</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />US LLC formation guidance from Day 1</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />8-module curriculum zero to first international sale</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />Private community of active Indian dropshippers</li>
+                <li><img src="assets/ic-check.svg" width="24" height="24" alt="" />Overs Facebook Ads + TikTok Ads not just theory</li>
+              </ul>
+
+              <button class="btn btn-cta" onclick="location.href='checkout.html'">Enroll Now Just ₹16,999</button>
+            </div>
+            </div>
+
+            <!-- social proof -->
+            <div class="enrolled-pill">
+              <!-- TODO: replace with real avatar cluster image -->
+              <span class="enrolled-avatars"><span></span><span></span><span></span></span>
+              20 People have enrolled in last 30 days
+            </div>
+          </div>
+
+          <!-- RIGHT: Curriculum accordion -->
+          <!-- checkout-style accordion (JS-rendered) -->
+          <div class="pricing__right">
+            <div id="modules-container" style="display:flex; flex-direction:column; gap:32px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 10 — FAQ (Frame 52) ===== -->
+    <section class="section faq">
+      <div class="section__inner faq__inner">
+        <div class="faq__head">
+          <h2 class="h2">Answers To Your Most Common<br />Questions Instantly</h2>
+          <p class="subheading">Discover detailed answers to common questions<br />in one convenient place.</p>
+        </div>
+
+        <div class="faq__list">
+          <div class="faq__panel">
+          <details class="faq-item" name="faq" open>
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">Do I Need Any Prior Experience To Join?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">No. The Curriculum Starts From Absolute Zero – What Dropshipping Is, How International Selling Works As An Indian, And How To Set Up Everything Legally. If You Can Use A Smartphone And Follow Instructions, You Can Start.</p>
+            </div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">How Is Hantrix Different From Free YouTube Content?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">[Add answer]</p>
+            </div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">What Is The Daily Live Call And How Does It Work?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">[Add answer]</p>
+            </div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">Can I Really Sell In The USA Or UK Sitting In India? Is It Legal?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">[Add answer]</p>
+            </div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">What If I Fall Behind Or Miss Classes?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">[Add answer]</p>
+            </div>
+          </details>
+
+          <details class="faq-item" name="faq">
+            <summary class="faq-item__summary">
+              <span class="faq-item__q">I've Bought Courses Before And Got Nothing Out Of Them. Why Will This Be Different?</span>
+              <span class="faq-item__toggle" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-item__body">
+              <span class="faq-item__divider"></span>
+              <p class="faq-item__a">[Add answer]</p>
+            </div>
+          </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 11 — Footer (reused from checkoutpagehantrix) ===== -->
+    <footer style="width:100%; background:#F5F5F5; padding:40px 80px 60px;">
+  <div style="max-width:1280px; margin:0 auto;">
+    <div style="padding:12px 32px 12px 12px; background:rgba(255,255,255,0); box-shadow:0px 11px 13px -5px rgba(0,0,0,0.10); border-radius:30px; outline:2px rgba(255,255,255,0.50) solid; outline-offset:-2px; display:inline-flex; flex-direction:column; gap:10px; width:100%;">
+      <div class="footer-row" style="align-self:stretch; display:inline-flex; align-items:flex-start; gap:32px;">
+
+        <!-- Left: Orange brand card -->
+        <div class="f-anim" data-fo="0" style="padding:32px; background:#F7941D; box-shadow:0 2px 0 0 rgba(0,0,0,0.25) inset, 0 11px 13px -5px rgba(0,0,0,0.20); border-radius:20px; display:flex; align-items:center; gap:10px; flex:none;">
+          <div style="width:335px; display:inline-flex; flex-direction:column; align-items:center; gap:191px;">
+            <!-- Logo -->
+            <img src="assets/footer-logo.png" style="height:61px; width:auto; object-fit:contain;">
+            <!-- Tagline + socials -->
+            <div style="align-self:stretch; display:flex; flex-direction:column; align-items:center; gap:32px;">
+              <div class="f-anim" data-fo="1" style="align-self:stretch; text-align:center; color:rgba(255,255,255,0.70); font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px; word-wrap:break-word;">Empowering learners with practical education for a stronger future.</div>
+              <div style="display:inline-flex; align-items:center; gap:16px;">
+                <!-- Instagram -->
+                <a class="f-anim" data-fo="5" href="https://www.instagram.com/hantrix.academy?igsh=bWI3dGhtZ2I4bGY2&utm_source=qr" target="_blank" rel="noopener" style="padding:12px; background:white; border-radius:50px; display:flex; justify-content:center; align-items:center; text-decoration:none;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="20" height="20" rx="6" stroke="#000" stroke-width="2" fill="none"/>
+                    <circle cx="12" cy="12" r="4" stroke="#000" stroke-width="2" fill="none"/>
+                    <circle cx="17.5" cy="6.5" r="1.5" fill="#000"/>
+                  </svg>
+                </a>
+                <!-- LinkedIn -->
+                <a class="f-anim" data-fo="6" href="https://www.linkedin.com/in/hantrix-academy-3033b0403/" target="_blank" rel="noopener" style="padding:12px; background:white; border-radius:50px; display:flex; justify-content:center; align-items:center; text-decoration:none;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="20" height="20" rx="4" stroke="#000" stroke-width="2" fill="none"/>
+                    <path d="M7 10v7M7 7v.5" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M11 17v-4c0-1.1.9-2 2-2h1a2 2 0 0 1 2 2v4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M11 10v7" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </a>
+                <!-- YouTube -->
+                <a class="f-anim" data-fo="7" href="https://www.youtube.com/@hantrixacademy" target="_blank" rel="noopener" style="padding:12px; background:white; border-radius:50px; display:flex; justify-content:center; align-items:center; text-decoration:none;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke="#000" stroke-width="2" fill="none"/>
+                    <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#000"/>
+                  </svg>
+                </a>
+                <!-- X (Twitter) -->
+                <a class="f-anim" data-fo="8" href="https://x.com/hantrixacademy?s=11" target="_blank" rel="noopener" style="padding:12px; background:white; border-radius:50px; display:flex; justify-content:center; align-items:center; text-decoration:none;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.75C7.44329 3.75 3.75 7.44329 3.75 12C3.75 16.5567 7.44329 20.25 12 20.25C16.5567 20.25 20.25 16.5567 20.25 12C20.25 7.44329 16.5567 3.75 12 3.75ZM2.25 12C2.25 6.61487 6.61487 2.25 12 2.25C17.3851 2.25 21.75 6.61487 21.75 12C21.75 17.3851 17.3851 21.75 12 21.75C6.61487 21.75 2.25 17.3851 2.25 12Z" fill="black"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.34352 8.47386C6.90712 7.83045 7.36801 6.96094 8.14545 6.96094H10.1963C10.6265 6.96094 11.0287 7.17412 11.2701 7.53012L16.7059 15.5444C17.1423 16.1878 16.6814 17.0573 15.9039 17.0573H13.8531C13.4229 17.0573 13.0207 16.8441 12.7793 16.4881L7.34352 8.47386ZM9.14723 8.46094L13.9604 15.5573H14.9022L10.089 8.46094H9.14723Z" fill="black"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.6242 12.2418C11.9351 12.5155 11.9652 12.9894 11.6915 13.3003L8.4399 16.9938C8.16619 17.3047 7.69228 17.3349 7.38138 17.0612C7.07048 16.7875 7.04032 16.3136 7.31403 16.0027L10.5657 12.3091C10.8394 11.9982 11.3133 11.9681 11.6242 12.2418Z" fill="black"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M16.2968 6.93707C16.6077 7.21078 16.6378 7.68469 16.3641 7.99559L13.3061 11.4692C13.0324 11.7801 12.5585 11.8103 12.2476 11.5366C11.9367 11.2629 11.9065 10.7889 12.1802 10.478L15.2383 7.00443C15.512 6.69352 15.9859 6.66337 16.2968 6.93707Z" fill="black"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Links + newsletter -->
+        <div style="flex:1; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:163px; display:inline-flex;">
+
+          <!-- Top row -->
+          <div style="align-self:stretch; justify-content:flex-start; align-items:center; gap:53px; display:inline-flex; padding-top:40px;">
+
+            <!-- WhatsApp -->
+            <div class="f-anim" data-fo="2" style="flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:16px; display:inline-flex;">
+              <div style="flex-direction:column; gap:6px; display:flex;">
+                <div style="color:#000; font-size:20px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; line-height:1.3;">Have questions?<br>Chat with us on WhatsApp!</div>
+                <div style="color:rgba(0,0,0,0.50); font-size:13px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:1.5;">Our team is here to help you with any queries.</div>
+              </div>
+              <a href="https://wa.me/919074174802?text=Hi%2C%20I%27m%20interested%20in%20joining%20Hantrix%20Academy.%20Can%20you%20help%20me%20with%20more%20details%3F" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:10px; padding:12px 20px; background:#fff; border-radius:50px; outline:1px rgba(0,0,0,0.12) solid; outline-offset:-1px; text-decoration:none; box-shadow:0px 4px 10px -2px rgba(0,0,0,0.08);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#25D366"/><path d="M17 14.8c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-1 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4C7 8 6.4 8.6 6.4 9.9c0 1.3 1 2.6 1.1 2.7.1.2 1.9 3 4.6 4.1.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3z" fill="#fff"/></svg>
+                <span style="color:#000; font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:600;">Chat on WhatsApp</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <div style="color:rgba(0,0,0,0.40); font-size:12px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400;">We typically reply within a few minutes.</div>
+            </div>
+
+            <!-- Link columns -->
+            <div style="justify-content:flex-start; align-items:flex-start; gap:54px; display:flex;">
+
+              <!-- Legal -->
+              <div class="f-anim" data-fo="3" style="flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:20px; display:inline-flex;">
+                <div style="color:#000; font-size:18px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; line-height:21.60px; word-wrap:break-word;">Legal</div>
+                <div style="align-self:stretch; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:12px; display:flex;">
+                  <a href="terms.html" style="color:rgba(0,0,0,0.50); font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px; word-wrap:break-word; text-decoration:none;">Terms of Service</a>
+                  <a href="privacy.html" style="color:rgba(0,0,0,0.50); font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px; word-wrap:break-word; text-decoration:none;">Privacy Policy</a>
+                  <a href="refund.html" style="color:rgba(0,0,0,0.50); font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px; word-wrap:break-word; text-decoration:none;">Refund Policy</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bottom bar -->
+          <div style="align-self:stretch; justify-content:flex-start; align-items:center; gap:170px; display:inline-flex;">
+            <!-- Copyright -->
+            <div class="f-anim" data-fo="4" style="justify-content:flex-start; align-items:center; gap:9px; display:flex;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#000" stroke-width="2"/><path d="M14.5 9.5a3.5 3.5 0 1 0 0 5" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
+              <div><span style="color:#000; font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px;">2026 </span><span style="color:#000; font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; text-transform:uppercase; line-height:16.80px;">Hantrix</span><span style="color:#000; font-size:14px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:400; line-height:16.80px;">. All rights reserved.</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+    </footer>
+
+  </main>
+
+  <!-- Back to top -->
+  <button class="to-top" id="toTop" aria-label="Back to top" title="Back to top">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- Curriculum accordion (same behaviour/style as checkoutpagehantrix) -->
+  <script>
+    const MODULES = [
+      ["Foundation",                       "Module 0", ["Mindset & Expectations", "How International Dropshipping Really Works", "Tools You Actually Need"]],
+      ["International Dropshipping Basics", "Module 1", ["What is International Dropshipping", "Introduction to Suppliers", "Wise Account Setup", "Stripe Account Setup", "Mercury Bank Account Setup", "Setting up Shopify Payments"]],
+      ["Shopify Store Setup",              "Module 2", ["Shopify Overview", "Shopify Store Setup", "Product Page", "Product Page Setup", "Legal Pages Setup", "App Integration", "Domain Setup", "Final Store Checklist"]],
+      ["Product Research",                 "Module 3", ["Introduction to Product Research", "Finding products through kalodata", "Finding products through Pipi ads"]],
+      ["Theme Pages",                      "Module 4", ["Introduction to Theme Pages", "How to Find Winning Products on Theme Pages", "How to Connect with Theme Pages"]],
+      ["Facebook Ads",                     "Module 5", ["Facebook Overview", "Pixel Setup", "Campaign Setup", "How to Run Ads", "Metrics & Performance Tracking", "Scaling Ads"]],
+      ["Case Study & Wrap Up",             "Module 6", ["Complete Dropshipping Case Study", "Strategy Recap & Wrap Up"]],
+      ["Customer Support",                 "Module 7", ["Customer Support Management", "Chargeback Prevention"]],
+    ];
+
+    let openIdx = 0;
+
+    function renderModules() {
+      const minusIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+      const plusIcon  = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+
+      document.getElementById('modules-container').innerHTML = MODULES.map((m, i) => {
+        const isOpen = openIdx === i;
+        const bullets = m[2].map(b =>
+          `<li class="pm-bullet" style="margin-left:24px;color:#000;font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;text-transform:capitalize;line-height:1.2;">${b}</li>`
+        ).join('');
+
+        const toggle = isOpen
+          ? `<div class="pm-toggle" style="width:46px;height:46px;flex:none;box-sizing:border-box;padding:11px;background:#F7941D;box-shadow:0px 11px 13px -5px rgba(0,0,0,0.20),0px 2px 0px rgba(0,0,0,0.25) inset;border-radius:62px;display:flex;justify-content:center;align-items:center;">${minusIcon}</div>`
+          : `<div class="pm-toggle" style="width:46px;height:46px;flex:none;box-sizing:border-box;padding:11px;border:1px solid rgba(0,0,0,0.10);border-radius:62px;display:flex;justify-content:center;align-items:center;">${plusIcon}</div>`;
+
+        const cardStyle = isOpen
+          ? "background:transparent;box-shadow:0px 11px 13px -5px rgba(0,0,0,0.20);"
+          : "background:transparent;border:1px solid rgba(0,0,0,0.20);";
+
+        const body = isOpen
+          ? `<div class="pm-divider" style="width:100%;height:1px;background:rgba(0,0,0,0.20);margin-top:24px;"></div>
+             <ul class="pm-bullets" style="display:flex;flex-direction:column;gap:16px;margin-top:32px;list-style:disc;padding:0;">${bullets}</ul>`
+          : '';
+
+        return `
+          <div class="pm-card" style="width:100%;box-sizing:border-box;padding:20px 32px;${cardStyle}border-radius:20px;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;">
+            <div onclick="toggleModule(${i})" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;width:100%;cursor:pointer;user-select:none;">
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;">
+                <div class="pm-title" style="color:#000;font-size:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;text-transform:capitalize;line-height:1.2;">${m[0]}</div>
+                <div class="pm-label" style="color:rgba(0,0,0,0.50);font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;text-transform:capitalize;line-height:1.2;">${m[1]}</div>
+              </div>
+              ${toggle}
+            </div>
+            ${body}
+          </div>`;
+      }).join('');
+    }
+
+    function toggleModule(i) {
+      openIdx = openIdx === i ? -1 : i;
+      renderModules();
+    }
+
+    renderModules();
+
+    // Floating glass navbar — pill on scroll (activate >100px, deactivate <60px)
+    (function () {
+      const nav = document.querySelector('.navbar');
+      if (!nav) return;
+      let floating = false, ticking = false;
+      function update() {
+        const y = window.pageYOffset || document.documentElement.scrollTop;
+        if (!floating && y > 100) { floating = true; nav.classList.add('is-floating'); }
+        else if (floating && y < 60) { floating = false; nav.classList.remove('is-floating'); }
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+      }, { passive: true });
+      update();
+    })();
+
+    // Back-to-top button
+    (function () {
+      const btn = document.getElementById('toTop');
+      if (!btn) return;
+      let ticking = false;
+      function update() {
+        const y = window.pageYOffset || document.documentElement.scrollTop;
+        btn.classList.toggle('show', y > 500);
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+      }, { passive: true });
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      update();
+    })();
+
+    // Mobile hamburger menu
+    (function () {
+      const burger = document.getElementById('navBurger');
+      const menu = document.getElementById('mobileMenu');
+      if (!burger || !menu) return;
+      burger.addEventListener('click', function () {
+        const open = menu.classList.toggle('open');
+        burger.setAttribute('aria-expanded', String(open));
+      });
+      menu.querySelectorAll('a, .btn').forEach(function (el) {
+        el.addEventListener('click', function () { menu.classList.remove('open'); });
+      });
+    })();
+  </script>
+
+  <!-- Scroll-reveal animations -->
+  <script>
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // Single elements: [selector, variant]  (variant: up | left | right | scale)
+      const singles = [
+        ['.hero__eyebrow-wrap', 'up'],
+        ['.hero__text', 'up'],
+        ['.hero__buttons', 'up'],
+        ['.hero__video', 'scale'],
+        ['.painpoints__inner > .h2', 'up'],
+        ['.painpoints__result-card', 'left'],
+        ['.painpoints__mistakes-card', 'right'],
+        ['.comparison__head', 'up'],
+        ['.cmp-card--others', 'left'],
+        ['.cmp-card--hantrix', 'right'],
+        ['.testimonials__head', 'up'],
+        ['.pricing__head', 'up'],
+        ['.pricing__right', 'right'],
+        ['.faq__head', 'soft'],
+      ];
+
+      // Staggered groups: [containerSelector, childSelector, variant, stepMs]
+      const groups = [
+        ['.mistakes__row', '.mistake', 'up-far', 110],
+        ['.faq__panel', '.faq-item', 'soft', 240],
+      ];
+
+      function prep(el, variant) {
+        el.classList.add('reveal');
+        if (variant && variant !== 'up') el.classList.add('reveal--' + variant);
+      }
+
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+      singles.forEach(function (pair) {
+        document.querySelectorAll(pair[0]).forEach(function (el) {
+          prep(el, pair[1]);
+          io.observe(el);
+        });
+      });
+
+      // groups: reveal all children together (staggered) when the container enters
+      groups.forEach(function (g) {
+        document.querySelectorAll(g[0]).forEach(function (container) {
+          const kids = Array.prototype.slice.call(container.querySelectorAll(g[1]));
+          kids.forEach(function (el, i) {
+            prep(el, g[2]);
+            el.style.setProperty('--d', (i * g[3]) + 'ms');
+          });
+          const gio = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                kids.forEach(function (el) { el.classList.add('is-visible'); });
+                gio.unobserve(e.target);
+              }
+            });
+          }, { threshold: 0.1, rootMargin: '0px 0px -4% 0px' });
+          gio.observe(container);
+        });
+      });
+
+      // Platforms: heading + image rise (slow) once the ticker card starts to show
+      (function () {
+        const ticker = document.querySelector('.platforms__logos');
+        const top = document.querySelector('.platforms__top');
+        if (!ticker || !top) return;
+        prep(ticker, 'up');
+        top.classList.add('reveal', 'reveal--rise', 'reveal--slow');
+        const pio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              ticker.classList.add('is-visible');
+              top.classList.add('is-visible');
+              pio.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -8% 0px' });
+        pio.observe(ticker);
+      })();
+    })();
+
+    // Live Schedule — premium sequenced reveal (heading → text → illustration → cards wave → LIVE)
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const section = document.querySelector('.liveschedule');
+      if (!section) return;
+      const heading = section.querySelector('.liveschedule__head .h2');
+      const text = section.querySelector('.liveschedule__subtext');
+      const illus = section.querySelector('.liveschedule__illustration');
+      const cards = Array.prototype.slice.call(section.querySelectorAll('.day-card'));
+      const lives = Array.prototype.slice.call(section.querySelectorAll('.day-card__status'));
+
+      const all = [];
+      function add(el, cls, delay) {
+        if (!el) return;
+        el.classList.add(cls);
+        el.style.setProperty('--d', delay + 'ms');
+        all.push(el);
+      }
+      add(heading, 'ls-heading', 0);
+      add(text, 'ls-text', 150);
+      add(illus, 'ls-illus', 400);
+      const base = 650, step = 90;
+      cards.forEach(function (c, i) { add(c, 'ls-card', base + i * step); });
+      lives.forEach(function (l, i) { add(l, 'ls-live', base + i * step + 480); });
+
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          all.forEach(function (el) { el.classList.add('is-in'); });
+          io.unobserve(e.target);
+          // once the wave finishes, drop the reveal class so hover uses its fast transition
+          setTimeout(function () {
+            cards.forEach(function (c) { c.classList.remove('ls-card', 'is-in'); });
+          }, base + cards.length * step + 900);
+        });
+      }, { threshold: 0.2 });
+      io.observe(section);
+    })();
+
+    // Testimonials coverflow carousel — auto-advances, each phone slides to center
+    (function () {
+      const gallery = document.querySelector('.testimonials__gallery');
+      if (!gallery) return;
+      const phones = Array.prototype.slice.call(gallery.querySelectorAll('.phone'));
+      const n = phones.length;
+      if (n < 2) return;
+
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let active = Math.floor(n / 2); // start with the middle phone centered
+      const prev = {};
+
+      function isMobile() { return window.innerWidth <= 640; }
+
+      function styleFor(off) {
+        const a = Math.abs(off);
+        if (a === 0) return { s: 1, o: 1, z: 30 };
+        if (a === 1) return { s: 0.78, o: 1, z: 20 };
+        return { s: 0.6, o: 0.42, z: 10 };
+      }
+
+      function layout() {
+        const gap = isMobile() ? 210 : 355;
+        // outer phones sit closer to their neighbours (non-linear spacing)
+        function posFor(off) {
+          if (off === 0) return 0;
+          const sign = off < 0 ? -1 : 1;
+          return Math.abs(off) === 1 ? sign * gap : sign * gap * 1.78;
+        }
+        phones.forEach(function (p, i) {
+          let off = ((i - active) % n + n) % n;
+          if (off > n / 2) off -= n; // wrap to symmetric range around 0
+          const wrapped = prev[i] !== undefined && Math.abs(off - prev[i]) > 1;
+          const st = styleFor(off);
+          if (wrapped) p.style.transition = 'none'; // teleport across the wrap, don't slide
+          p.style.transform =
+            'translate(-50%, -50%) translateX(' + posFor(off) + 'px) scale(' + st.s + ')';
+          p.style.opacity = st.o;
+          p.style.zIndex = st.z;
+          if (wrapped) { void p.offsetWidth; p.style.transition = ''; }
+          prev[i] = off;
+        });
+      }
+
+      layout();
+
+      let timer = null;
+      function start() {
+        stop();
+        timer = setInterval(function () { active = (active + 1) % n; layout(); }, 3000);
+      }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+      start();
+      gallery.addEventListener('mouseenter', stop);
+      gallery.addEventListener('mouseleave', start);
+      window.addEventListener('resize', layout);
+
+      // click a phone to bring it to the center
+      phones.forEach(function (p, i) {
+        p.addEventListener('click', function () { active = i; layout(); start(); });
+      });
+    })();
+
+    // Footer — staggered premium reveal, once when ~20% enters the viewport
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const footer = document.querySelector('footer');
+      if (!footer) return;
+      const items = Array.prototype.slice.call(footer.querySelectorAll('.f-anim'));
+      items.forEach(function (el) {
+        const order = parseInt(el.getAttribute('data-fo') || '0', 10);
+        el.style.setProperty('--fd', (order * 160) + 'ms'); // explicit order: text first, logos last
+      });
+      const fio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            items.forEach(function (el) { el.classList.add('is-in'); });
+            fio.unobserve(e.target); // trigger once, never replay
+          }
+        });
+      }, { threshold: 0.2 });
+      fio.observe(footer);
+    })();
+  </script>
+</body>
+</html>

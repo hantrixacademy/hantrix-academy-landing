@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Hantrix Academy</title>
+  <!-- Cashfree Web SDK (same as checkoutpagehantrix) -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <!-- Meta Pixel -->
+  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1563397922104537');fbq('track','PageView');</script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1563397922104537&ev=PageView&noscript=1"/></noscript>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== Tokens copied from the main landing page ===== */
+    :root {
+      --orange: #f7941d;
+      --bg: #f5f5f5;
+      --white: #ffffff;
+      --peach: #fdf0e0;
+      --text: #000000;
+      --text-muted: rgba(0, 0, 0, 0.5);
+      --text-faint: rgba(0, 0, 0, 0.3);
+      --text-soft: rgba(0, 0, 0, 0.7);
+      --border-light: rgba(0, 0, 0, 0.1);
+      --border-medium: rgba(0, 0, 0, 0.2);
+      --dark: #141210;
+      --r-card: 20px;
+      --r-card-sm: 12px;
+      --r-pill: 62px;
+      --shadow-btn: 0px 11px 13px -5px rgba(0, 0, 0, 0.2);
+      --shadow-btn-inset: inset 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
+      --shadow-card: 0px 11px 13px -5px rgba(0, 0, 0, 0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: "Plus Jakarta Sans", sans-serif; background: var(--bg); color: var(--text); }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button, input { font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+
+    /* ===== Buttons — same recipe as .btn-primary ===== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 11px 22px; border-radius: var(--r-pill);
+      font-weight: 500; font-size: 14px; line-height: 1.2;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-primary { background: var(--orange); color: var(--white); box-shadow: var(--shadow-btn), var(--shadow-btn-inset); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0px 14px 16px -5px rgba(0, 0, 0, 0.25), var(--shadow-btn-inset); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-outline { background: var(--white); color: var(--text); border: 1px solid var(--border-light); }
+    .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
+
+    /* ===== Top bar — sits on the main background, no bar/border ===== */
+    .topbar { background: transparent; }
+    .topbar__in { max-width: 1120px; margin: 0 auto; padding: 22px 24px 4px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar img { height: 40px; width: auto; }
+    .topbar .secure { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
+
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 22px 24px 28px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 38px; align-items: start; }
+
+    /* ===== Glassy card — same look as .pain-card / .join-card ===== */
+    .card {
+      background: rgba(255, 255, 255, 0.6);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 22px;
+      box-shadow: var(--shadow-card);
+      padding: 18px;
+    }
+    .right > * + * { margin-top: 13px; }
+    .card h3 { font-size: 17px; font-weight: 500; margin-bottom: 13px; }
+
+    /* ---------- LEFT ---------- */
+    .back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--orange); margin-bottom: 12px; }
+    .left h1 { font-size: 26px; font-weight: 500; line-height: 1.2; }
+    .left .sub { margin-top: 6px; font-size: 13px; color: var(--text-muted); }
+
+    /* course thumbnail */
+    .thumb {
+      position: relative; overflow: hidden; margin-top: 15px;
+      border-radius: 22px; padding: 64px 22px 60px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--dark) radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1.5px);
+      background-size: 12px 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .thumb::after { content: ""; position: absolute; left: -14%; right: -14%; bottom: -28px; height: 52px; background: var(--orange); border-radius: 50%; z-index: 1; }
+    .thumb__logo { position: relative; z-index: 2; font-size: 13px; font-weight: 800; letter-spacing: 3px; color: #fff; }
+    .thumb__logo span { color: var(--orange); }
+    .thumb__logo small { display: block; font-size: 7px; letter-spacing: 4px; font-weight: 600; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .thumb__intl { position: relative; z-index: 2; margin-top: 13px; font-size: 18px; font-weight: 700; letter-spacing: 2px; color: #fff; }
+    .thumb__drop { position: relative; z-index: 2; font-size: 26px; font-weight: 800; letter-spacing: 1px; color: var(--orange); line-height: 1.1; }
+    .thumb__badge { position: relative; z-index: 2; display: inline-block; margin-top: 11px; padding: 7px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #fff; border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 7px; }
+
+    /* feature list — glassy card, inner rows */
+    .features { margin-top: 13px; padding: 2px 18px; }
+    .feat { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+    .feat:last-child { border-bottom: none; }
+    .feat__ico { width: 36px; height: 36px; flex-shrink: 0; border-radius: 11px; border: 1.5px solid rgba(247, 148, 29, 0.4); background: rgba(247, 148, 29, 0.09); display: flex; align-items: center; justify-content: center; color: var(--orange); }
+    .feat__ico svg { width: 18px; height: 18px; }
+    .feat__t { font-size: 13.5px; font-weight: 500; }
+    .feat__s { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    .guarantee { margin-top: 12px; display: flex; align-items: flex-start; gap: 9px; padding-left: 4px; }
+    .guarantee__c { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .guarantee__t { font-size: 13px; font-weight: 600; }
+    .guarantee__s { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ---------- RIGHT — form fields ---------- */
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
+    .field > label { display: block; font-size: 12px; font-weight: 500; color: var(--text-soft); margin-bottom: 6px; }
+    .field input { width: 100%; padding: 10px 13px; font-size: 14px; background: var(--white); border: 1px solid var(--border-light); border-radius: var(--r-card-sm); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+    .field input::placeholder { color: var(--text-faint); }
+    .field input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247, 148, 29, 0.12); }
+    .field .err { display: none; font-size: 11.5px; color: #e11d48; margin-top: 5px; }
+    .field.invalid input { border-color: #e11d48; }
+    .field.invalid .phone { border-color: #e11d48; }
+    .field.invalid .err { display: block; }
+
+    .phone { display: flex; background: var(--white); border: 1px solid var(--border-light); border-radius: var(--r-card-sm); overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; }
+    .phone:focus-within { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247, 148, 29, 0.12); }
+    .phone .cc { display: flex; align-items: center; gap: 5px; padding: 0 11px; font-size: 13px; font-weight: 500; background: #fafafa; border-right: 1px solid var(--border-light); }
+    .phone input { flex: 1; border: none; outline: none; padding: 10px 13px; font-size: 14px; background: transparent; }
+
+    /* order summary */
+    .sum-course { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); }
+    .mini-thumb { width: 54px; height: 44px; border-radius: 9px; flex-shrink: 0; background: var(--dark) radial-gradient(rgba(255,255,255,0.08) 0.8px, transparent 0.8px); background-size: 7px 7px; display: flex; align-items: center; justify-content: center; }
+    .mini-thumb img { width: 38px; height: auto; display: block; }
+    .sum-course__n { flex: 1; font-size: 13px; font-weight: 500; line-height: 1.3; }
+    .sum-course__p { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .srow { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-top: 10px; }
+    .srow .lbl { color: var(--text-muted); }
+    .srow.discount .lbl, .srow.discount .val { color: var(--orange); }
+    .total { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
+    .total .tl { font-size: 16px; font-weight: 500; }
+    .total .tl small { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+    .total .tv { font-size: 21px; font-weight: 600; }
+
+    .secure-box { display: flex; align-items: center; gap: 11px; background: var(--peach); border: 1px solid rgba(247, 148, 29, 0.2); border-radius: var(--r-card); padding: 11px 14px; box-shadow: var(--shadow-card); }
+    .secure-box svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }
+    .secure-box__t { font-size: 13px; font-weight: 600; }
+    .secure-box__s { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    .proceed { padding: 13px; font-size: 16px; box-shadow: var(--shadow-btn), var(--shadow-btn-inset), 0 12px 22px -8px rgba(247,148,29,0.5); }
+    .proceed[disabled] { opacity: 0.7; cursor: default; }
+    .pay-err { display: none; margin-top: 10px; font-size: 12.5px; color: #e11d48; text-align: center; }
+    .pay-err.show { display: block; }
+
+    .paylogos { margin-top: 13px; display: flex; align-items: center; justify-content: center; gap: 17px; flex-wrap: wrap; }
+    .paylogos span { font-size: 12px; font-weight: 800; letter-spacing: 0.3px; opacity: 0.8; }
+    .mc { display: inline-flex; }
+    .mc i { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+    .mc i:first-child { background: #eb001b; }
+    .mc i:last-child { background: #f79e1b; margin-left: -7px; opacity: 0.9; }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; gap: 32px; }
+      .left h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__in">
+      <a href="index.html"><img src="assets/logo.png" alt="Hantrix Academy" /></a>
+      <span class="secure">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Secure Checkout
+      </span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="left">
+        <a class="back" href="index.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to Home
+        </a>
+        <h1>International Dropshipping<br />Full Course</h1>
+        <p class="sub">Master International Dropshipping Step-by-Step</p>
+
+        <div class="thumb">
+          <div class="thumb__logo">HANTRI<span>X</span><small>ACADEMY</small></div>
+          <div class="thumb__intl">INTERNATIONAL</div>
+          <div class="thumb__drop">DROPSHIPPING</div>
+          <div class="thumb__badge">FULL COURSE</div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right">
+        <!-- contact -->
+        <div class="card">
+          <h3>Your Details</h3>
+
+          <div class="field" id="f-name">
+            <label for="name">Full Name</label>
+            <input id="name" type="text" autocomplete="name" placeholder="Enter your full name" />
+            <span class="err">Please enter your full name.</span>
+          </div>
+
+          <div class="field" id="f-email">
+            <label for="email">Email Address</label>
+            <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" />
+            <span class="err">Please enter a valid email address.</span>
+          </div>
+
+          <div class="field" id="f-wa">
+            <label for="phone">WhatsApp Number</label>
+            <div class="phone">
+              <span class="cc">🇮🇳 +91
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+              <input id="phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit WhatsApp number" />
+            </div>
+            <span class="err">Enter a valid 10-digit WhatsApp number.</span>
+          </div>
+        </div>
+
+        <!-- summary -->
+        <div class="card">
+          <h3>Order Summary</h3>
+          <div class="sum-course">
+            <span class="mini-thumb"><img src="assets/footer-logo.png" alt="Hantrix Academy" /></span>
+            <span class="sum-course__n">International Dropshipping Full Course</span>
+            <span class="sum-course__p">₹16,999</span>
+          </div>
+          <div class="srow"><span class="lbl">Subtotal</span><span class="val">₹16,999</span></div>
+          <div class="srow discount"><span class="lbl">Discount</span><span class="val">- ₹0</span></div>
+          <div class="total">
+            <span class="tl">Total Amount<small>Inclusive of all taxes</small></span>
+            <span class="tv">₹16,999</span>
+          </div>
+        </div>
+
+        <!-- secure note -->
+        <div class="secure-box">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          <div><div class="secure-box__t">100% Secure Payments</div><div class="secure-box__s">Your payment information is encrypted and safe.</div></div>
+        </div>
+
+        <!-- proceed -->
+        <button class="btn btn-primary proceed" id="payBtn">Proceed to Pay ₹16,999</button>
+        <p class="pay-err" id="payErr"></p>
+
+        <div class="paylogos">
+          <span style="color:#5b6770; font-style:italic;">UPI))</span>
+          <span style="color:#00b9f1;">Pay<span style="color:#002970;">tm</span></span>
+          <span style="color:#1a1f71;">VISA</span>
+          <span class="mc"><i></i><i></i></span>
+          <span style="color:#0a4595; font-style:italic;">RuPay»</span>
+          <span style="color:#4285f4;">G Pay</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    var nameEl = document.getElementById('name');
+    var emailEl = document.getElementById('email');
+    var phoneEl = document.getElementById('phone');
+
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // keep WhatsApp number digits-only, max 10
+    phoneEl.addEventListener('input', function () {
+      phoneEl.value = phoneEl.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    function fieldOf(el) { return el.closest('.field'); }
+    function setValid(el, ok) { fieldOf(el).classList.toggle('invalid', !ok); return ok; }
+
+    function checkName()  { return setValid(nameEl, nameEl.value.trim().length >= 2); }
+    function checkEmail() { return setValid(emailEl, EMAIL_RE.test(emailEl.value.trim())); }
+    function checkPhone() { return setValid(phoneEl, /^[6-9]\d{9}$/.test(phoneEl.value)); }
+
+    // validate a field once the user leaves it, and clear the error while fixing it
+    [[nameEl, checkName], [emailEl, checkEmail], [phoneEl, checkPhone]].forEach(function (pair) {
+      pair[0].addEventListener('blur', pair[1]);
+      pair[0].addEventListener('input', function () {
+        if (fieldOf(pair[0]).classList.contains('invalid')) pair[1]();
+      });
+    });
+
+    // ── Cashfree payment (same worker + flow as checkoutpagehantrix) ──
+    var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
+    var payErr = document.getElementById('payErr');
+
+    function showPayErr(msg) { payErr.textContent = msg; payErr.classList.add('show'); }
+    function hidePayErr() { payErr.textContent = ''; payErr.classList.remove('show'); }
+
+    async function initiatePayment(name, email, phone, btnEl) {
+      if (window.fbq) fbq('track', 'Lead', { content_name: 'Hantrix Academy Enrollment' });
+      var original = btnEl.textContent;
+      btnEl.disabled = true;
+      btnEl.textContent = 'Please wait…';
+      hidePayErr();
+      try {
+        var res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // Cashfree stores these customer details on the order in your account
+          body: JSON.stringify({ name: name, email: email, phone: phone })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.payment_session_id) {
+          throw new Error(data.error || 'Payment init failed');
+        }
+        if (window.fbq) fbq('track', 'InitiateCheckout', { value: 16999, currency: 'INR', content_name: 'Hantrix Academy Enrollment' });
+        var cashfree = await Cashfree({ mode: 'production' });
+        cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      } catch (err) {
+        showPayErr((err && err.message) ? err.message : 'Payment failed. Please try again.');
+        btnEl.disabled = false;
+        btnEl.textContent = original;
+      }
+    }
+
+    document.getElementById('payBtn').addEventListener('click', function () {
+      // run all checks (don't short-circuit, so every bad field lights up)
+      var okName = checkName(), okEmail = checkEmail(), okPhone = checkPhone();
+      if (!(okName && okEmail && okPhone)) {
+        hidePayErr();
+        var firstBad = document.querySelector('.field.invalid input');
+        if (firstBad) firstBad.focus();
+        return;
+      }
+      // all valid — create the Cashfree order and open the payment page
+      initiatePayment(nameEl.value.trim(), emailEl.value.trim(), phoneEl.value, this);
+    });
+  </script>
+</body>
+</html>
