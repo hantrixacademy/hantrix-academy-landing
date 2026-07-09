@@ -1882,13 +1882,6 @@ svg {
     padding: 0 !important;
   }
 
-  /* On phones a full-width element translated sideways for the reveal spills
-     past the screen edge → horizontal scroll. Reveal vertically instead so
-     nothing overflows (no root overflow guard needed → sticky navbar works). */
-  .reveal--left,
-  .reveal--right {
-    transform: translateY(34px);
-  }
 }
 
 /* =============================================================
@@ -2080,4 +2073,18 @@ footer a[href$=".html"]:hover {
    ============================================================= */
 .footer-mobile {
   display: none; /* hidden on desktop; shown at ≤640px */
+}
+
+/* =============================================================
+   MOBILE REVEAL — vertical only
+   Placed after the reveal definitions so it wins by source order.
+   On phones a full-width element translated sideways for the reveal spills
+   past the screen edge → horizontal scroll. Reveal vertically instead.
+   (.reveal.is-visible has higher specificity, so it still animates to 0.)
+   ============================================================= */
+@media (max-width: 640px) {
+  .reveal--left,
+  .reveal--right {
+    transform: translateY(34px);
+  }
 }
