@@ -1482,6 +1482,10 @@ svg {
   .footer-mobile {
     display: block !important;
   }
+  /* kill the page bottom padding so there is no empty space under the footer */
+  .page {
+    padding-bottom: 0 !important;
+  }
 }
 @media (max-width: 640px) {
   .h1 {
