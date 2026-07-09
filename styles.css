@@ -1749,8 +1749,11 @@ svg {
   /* testimonials carousel: smaller on mobile */
   .testimonials__gallery {
     height: 520px;
-    /* clip the bleeding edge phones on mobile only, so there is no
-       horizontal scroll on phones (desktop keeps them fully visible) */
+    /* Break out of the section padding to full screen width so the 1st/last
+       phones bleed to the very edges of the screen, then clip so there is no
+       horizontal page scroll on phones. */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
     overflow-x: clip;
   }
   .phone {
