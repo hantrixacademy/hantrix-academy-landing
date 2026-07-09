@@ -44,6 +44,10 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Root guard: scroll-reveal transforms + the coverflow testimonial phones
+     bleed past the edge by design. `clip` contains them so there is never a
+     horizontal scrollbar on any screen, while keeping position:sticky working. */
+  overflow-x: clip;
 }
 
 body {
@@ -52,6 +56,9 @@ body {
   color: var(--text);
   display: flex;
   justify-content: center;
+  /* guard: never allow horizontal scroll on any screen size.
+     `clip` (not hidden) keeps position:sticky working. */
+  overflow-x: clip;
 }
 
 img {
@@ -1700,7 +1707,8 @@ svg {
     gap: 30px;
   }
   .comparison__cards {
-    gap: 30px;
+    flex-direction: column;
+    gap: 20px;
   }
   .cmp-card {
     padding: 20px;
