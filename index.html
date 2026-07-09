@@ -484,12 +484,12 @@
     <!-- ===== Section 11 — Footer (reused from checkoutpagehantrix) ===== -->
     <footer style="width:100%; background:#F5F5F5; padding:40px 80px 60px;">
   <div style="max-width:1280px; margin:0 auto;">
-    <div style="padding:12px 32px 12px 12px; background:rgba(255,255,255,0); box-shadow:0px 11px 13px -5px rgba(0,0,0,0.10); border-radius:30px; outline:2px rgba(255,255,255,0.50) solid; outline-offset:-2px; display:inline-flex; flex-direction:column; gap:10px; width:100%;">
+    <div class="ft-card" style="padding:12px 32px 12px 12px; background:rgba(255,255,255,0); box-shadow:0px 11px 13px -5px rgba(0,0,0,0.10); border-radius:30px; outline:2px rgba(255,255,255,0.50) solid; outline-offset:-2px; display:inline-flex; flex-direction:column; gap:10px; width:100%;">
       <div class="footer-row" style="align-self:stretch; display:inline-flex; align-items:flex-start; gap:32px;">
 
         <!-- Left: Orange brand card -->
-        <div class="f-anim" data-fo="0" style="padding:32px; background:#F7941D; box-shadow:0 2px 0 0 rgba(0,0,0,0.25) inset, 0 11px 13px -5px rgba(0,0,0,0.20); border-radius:20px; display:flex; align-items:center; gap:10px; flex:none;">
-          <div style="width:335px; display:inline-flex; flex-direction:column; align-items:center; gap:191px;">
+        <div class="f-anim ft-brand" data-fo="0" style="padding:32px; background:#F7941D; box-shadow:0 2px 0 0 rgba(0,0,0,0.25) inset, 0 11px 13px -5px rgba(0,0,0,0.20); border-radius:20px; display:flex; align-items:center; gap:10px; flex:none;">
+          <div class="ft-brand-col" style="width:335px; display:inline-flex; flex-direction:column; align-items:center; gap:191px;">
             <!-- Logo -->
             <img src="assets/footer-logo.png" style="height:61px; width:auto; object-fit:contain;">
             <!-- Tagline + socials -->
@@ -535,10 +535,10 @@
         </div>
 
         <!-- Right: Links + newsletter -->
-        <div style="flex:1; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:163px; display:inline-flex;">
+        <div class="ft-right" style="flex:1; flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:163px; display:inline-flex;">
 
           <!-- Top row -->
-          <div style="align-self:stretch; justify-content:flex-start; align-items:center; gap:53px; display:inline-flex; padding-top:40px;">
+          <div class="ft-toprow" style="align-self:stretch; justify-content:flex-start; align-items:center; gap:53px; display:inline-flex; padding-top:40px;">
 
             <!-- WhatsApp -->
             <div class="f-anim" data-fo="2" style="flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:16px; display:inline-flex;">
@@ -555,7 +555,7 @@
             </div>
 
             <!-- Link columns -->
-            <div style="justify-content:flex-start; align-items:flex-start; gap:54px; display:flex;">
+            <div class="ft-links" style="justify-content:flex-start; align-items:flex-start; gap:54px; display:flex;">
 
               <!-- Legal -->
               <div class="f-anim" data-fo="3" style="flex-direction:column; justify-content:flex-start; align-items:flex-start; gap:20px; display:inline-flex;">
@@ -571,7 +571,7 @@
           </div>
 
           <!-- Bottom bar -->
-          <div style="align-self:stretch; justify-content:flex-start; align-items:center; gap:170px; display:inline-flex;">
+          <div class="ft-bottom" style="align-self:stretch; justify-content:flex-start; align-items:center; gap:170px; display:inline-flex;">
             <!-- Copyright -->
             <div class="f-anim" data-fo="4" style="justify-content:flex-start; align-items:center; gap:9px; display:flex;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#000" stroke-width="2"/><path d="M14.5 9.5a3.5 3.5 0 1 0 0 5" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
