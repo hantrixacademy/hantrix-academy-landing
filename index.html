@@ -896,156 +896,72 @@
       io.observe(section);
     })();
 
-    // Testimonials carousel — desktop: discrete coverflow (auto-advance + click).
-    // Mobile: continuous momentum coverflow (drag/flick inertia, snap, infinite loop).
+    // Testimonials coverflow — auto-advances; the next phone slides straight to
+    // centre (discrete). Desktop: click a phone to centre it. Mobile: swipe
+    // left/right to advance one card at a time.
     (function () {
       const gallery = document.querySelector('.testimonials__gallery');
       if (!gallery) return;
       const phones = Array.prototype.slice.call(gallery.querySelectorAll('.phone'));
       const n = phones.length;
       if (n < 2) return;
-
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const mqMobile = window.matchMedia('(max-width: 640px)');
-      const now = function () { return (window.performance && performance.now) ? performance.now() : Date.now(); };
+      let active = Math.floor(n / 2), prevOff = {};
 
-      // Position/scale/opacity for a phone whose (wrapped) offset from centre is `rel`.
-      // Continuous formula that matches the original discrete anchors at rel = 0,1,2.
-      function setPhone(p, rel, gap) {
+      function gap() { return mqMobile.matches ? 210 : 355; }
+      function setPhone(p, rel, g) {
         const a = Math.abs(rel), sign = rel < 0 ? -1 : 1;
-        const px = a <= 1 ? sign * gap * a : sign * (gap + gap * 0.78 * (a - 1));
+        const px = a <= 1 ? sign * g * a : sign * (g + g * 0.78 * (a - 1));
         const sc = a <= 1 ? 1 - 0.22 * a : Math.max(0.6, 0.78 - 0.18 * (a - 1));
         const op = a <= 1 ? 1 : Math.max(0.42, 1 - 0.58 * (a - 1));
-        p.style.transform = 'translate(-50%, -50%) translate3d(' + px.toFixed(2) + 'px,0,0) scale(' + sc.toFixed(3) + ')';
+        p.style.transform = 'translate(-50%, -50%) translateX(' + px.toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
         p.style.opacity = op.toFixed(2);
         p.style.zIndex = String(Math.max(1, Math.round(30 - a * 10)));
       }
-      function wrap(rel) { return rel - n * Math.round(rel / n); } // → infinite loop
-
-      /* ---------------- DESKTOP: discrete auto-advance ---------------- */
-      var deskTimer = null, active = Math.floor(n / 2), prevOff = {};
-      function deskRender() {
+      function render() {
+        const g = gap();
         for (var i = 0; i < n; i++) {
-          var rel = wrap(i - active);
+          var rel = i - active; rel = rel - n * Math.round(rel / n); // wrap → infinite
           var p = phones[i];
           var teleport = prevOff[i] !== undefined && Math.abs(rel - prevOff[i]) > 1;
-          if (teleport) p.style.transition = 'none';        // jump across the wrap, don't slide
-          setPhone(p, rel, 355);
+          if (teleport) p.style.transition = 'none'; // jump across the wrap, don't slide
+          setPhone(p, rel, g);
           if (teleport) { void p.offsetWidth; p.style.transition = ''; }
           prevOff[i] = rel;
         }
       }
-      function deskStart() { deskStop(); if (reduceMotion) return; deskTimer = setInterval(function () { active = (active + 1) % n; deskRender(); }, 3000); }
-      function deskStop() { if (deskTimer) { clearInterval(deskTimer); deskTimer = null; } }
-      function deskClick() { active = phones.indexOf(this); deskRender(); deskStart(); }
-      function deskEnable() {
-        active = Math.floor(n / 2); prevOff = {};
-        phones.forEach(function (p) { p.style.transition = ''; p.addEventListener('click', deskClick); });
-        gallery.addEventListener('mouseenter', deskStop);
-        gallery.addEventListener('mouseleave', deskStart);
-        deskRender(); deskStart();
-      }
-      function deskDisable() {
-        deskStop();
-        phones.forEach(function (p) { p.removeEventListener('click', deskClick); });
-        gallery.removeEventListener('mouseenter', deskStop);
-        gallery.removeEventListener('mouseleave', deskStart);
-      }
 
-      /* ---------------- MOBILE: continuous momentum coverflow ---------------- */
-      var GAP = 210, AUTO = 0.006, FRICTION = 0.93, SNAP_K = 0.16, RESUME_MS = 2500;
-      var pos = Math.floor(n / 2), vel = 0, state = 'auto', snapTo = 0;
-      var raf = null, resumeTimer = null;
-      var dragging = false, decided = false, sx = 0, sy = 0, sPos = 0, lastX = 0, lastT = 0;
+      var timer = null;
+      function start() { stop(); if (reduceMotion) return; timer = setInterval(function () { active = (active + 1) % n; render(); }, 3000); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      function go(delta) { active = ((active + delta) % n + n) % n; render(); }
 
-      function mRender() { for (var i = 0; i < n; i++) setPhone(phones[i], wrap(i - pos), GAP); }
-      function scheduleResume() { clearTimeout(resumeTimer); resumeTimer = setTimeout(function () { state = 'auto'; }, RESUME_MS); }
+      // click / tap a phone to bring it to the centre
+      phones.forEach(function (p, i) { p.addEventListener('click', function () { active = i; render(); start(); }); });
+      gallery.addEventListener('mouseenter', stop);
+      gallery.addEventListener('mouseleave', start);
 
-      function loop() {
-        if (!dragging) {
-          if (state === 'auto') {
-            pos += AUTO;                                       // slow continuous R→L
-          } else if (state === 'momentum') {
-            pos += vel; vel *= FRICTION;
-            if (Math.abs(vel) < 0.006) { snapTo = Math.round(pos); state = 'snap'; }
-          } else if (state === 'snap') {
-            pos += (snapTo - pos) * SNAP_K;                    // ease-out to nearest card
-            if (Math.abs(snapTo - pos) < 0.002) { pos = snapTo; state = 'paused'; scheduleResume(); }
-          }
-          if (pos > 1e6 || pos < -1e6) pos = ((pos % n) + n) % n;
-          mRender();
-        }
-        raf = requestAnimationFrame(loop);
-      }
-
-      function onDown(e) {
-        dragging = false; decided = false;
-        sx = e.clientX; sy = e.clientY; sPos = pos; lastX = e.clientX; lastT = e.timeStamp || now();
-        clearTimeout(resumeTimer);
-        state = 'paused';                                      // hold while the finger is down
-        window.addEventListener('pointermove', onMove, { passive: true });
-        window.addEventListener('pointerup', onUp);
-        window.addEventListener('pointercancel', onUp);
-      }
-      function onMove(e) {
+      // mobile: swipe to advance one card (it slides straight to centre)
+      var sx = 0, sy = 0, tracking = false;
+      gallery.style.touchAction = 'pan-y'; // horizontal swipe → us; vertical → page scroll
+      gallery.addEventListener('pointerdown', function (e) {
+        if (!mqMobile.matches) return;
+        sx = e.clientX; sy = e.clientY; tracking = true; stop();
+      });
+      window.addEventListener('pointerup', function (e) {
+        if (!tracking) return; tracking = false;
         var dx = e.clientX - sx, dy = e.clientY - sy;
-        if (!decided) {
-          if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-          decided = true;
-          dragging = Math.abs(dx) > Math.abs(dy);              // horizontal → drag; vertical → let page scroll
-          if (!dragging) { cleanup(); scheduleResume(); return; }
-        }
-        if (!dragging) return;
-        pos = sPos - dx / GAP;
-        var t = e.timeStamp || now(), dt = Math.max(1, t - lastT);
-        vel = ((lastX - e.clientX) / GAP) / dt * 16;           // cards per frame
-        lastX = e.clientX; lastT = t;
-        mRender();
-      }
-      function onUp() {
-        cleanup();
-        if (dragging) {
-          if (vel > 0.9) vel = 0.9; if (vel < -0.9) vel = -0.9;
-          if (Math.abs(vel) > 0.01) { state = 'momentum'; } else { snapTo = Math.round(pos); state = 'snap'; }
-        } else {
-          scheduleResume();
-        }
-        dragging = false;
-      }
-      function cleanup() {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-        window.removeEventListener('pointercancel', onUp);
-      }
-      function mobEnable() {
-        pos = Math.floor(n / 2); vel = 0; state = 'auto';
-        phones.forEach(function (p) { p.style.transition = 'none'; }); // JS animates every frame
-        gallery.style.touchAction = 'pan-y';                   // horizontal → us, vertical → page scroll
-        gallery.style.cursor = 'grab';
-        gallery.addEventListener('pointerdown', onDown);
-        mRender();
-        if (!raf) raf = requestAnimationFrame(loop);
-      }
-      function mobDisable() {
-        if (raf) { cancelAnimationFrame(raf); raf = null; }
-        clearTimeout(resumeTimer); cleanup();
-        gallery.removeEventListener('pointerdown', onDown);
-        gallery.style.touchAction = ''; gallery.style.cursor = '';
-        phones.forEach(function (p) { p.style.transition = ''; });
-      }
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1); // left → next, right → prev
+        start();
+      });
+      window.addEventListener('pointercancel', function () { tracking = false; start(); });
 
-      /* ---------------- switch modes at the breakpoint ---------------- */
-      var isMob = null;
-      function apply() {
-        var m = mqMobile.matches;
-        if (m === isMob) return;
-        if (isMob === true) mobDisable(); else if (isMob === false) deskDisable();
-        isMob = m;
-        if (m) mobEnable(); else deskEnable();
-      }
-      apply();
-      if (mqMobile.addEventListener) mqMobile.addEventListener('change', apply);
-      else mqMobile.addListener(apply);
+      window.addEventListener('resize', render);
+      if (mqMobile.addEventListener) mqMobile.addEventListener('change', render);
+
+      render();
+      start();
     })();
 
     // Footer — staggered premium reveal, once when ~20% enters the viewport
