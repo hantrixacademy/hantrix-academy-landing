@@ -1472,15 +1472,15 @@ svg {
     padding: 30px 20px;
   }
 
-  /* ----- Footer: swap the desktop layout for the dedicated Figma mobile design ----- */
+  /* ----- Footer: swap the desktop layout for the checkoutpagehantrix mobile footer ----- */
   footer {
-    padding: 30px 20px !important;
+    padding: 0 !important;
   }
   .footer-desktop {
     display: none !important;
   }
   .footer-mobile {
-    display: flex !important;
+    display: block !important;
   }
 }
 @media (max-width: 640px) {
@@ -1857,9 +1857,9 @@ svg {
     height: 30px;
   }
 
-  /* footer */
+  /* footer — mobile footer handles its own padding */
   footer {
-    padding: 40px 20px 40px !important;
+    padding: 0 !important;
   }
 }
 
@@ -2046,89 +2046,10 @@ footer a[href$=".html"]:hover {
 }
 
 /* =============================================================
-   MOBILE FOOTER — dedicated design from Figma (node 268:4167)
-   Shown only ≤640px (toggled in the mobile media query above).
-   Content kept: brand card, WhatsApp block, Legal, copyright, watermark.
+   MOBILE FOOTER — copied from the checkoutpagehantrix project.
+   Markup is fully inline-styled; this only toggles visibility
+   (shown at ≤640px via the mobile media query above).
    ============================================================= */
 .footer-mobile {
   display: none; /* hidden on desktop; shown at ≤640px */
-  width: 100%;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 40px;
-}
-/* glassy outer card wrapping everything */
-.fm-card {
-  background: rgba(255, 255, 255, 0);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 30px;
-  box-shadow: 0px 11px 13px -5px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-}
-/* orange brand card — logo pinned top, tagline+socials bottom (Figma space-between) */
-.fm-brand {
-  background: #f7941d;
-  border-radius: 20px;
-  box-shadow: 0px 11px 13px -5px rgba(0, 0, 0, 0.2), inset 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
-  padding: 32px;
-  min-height: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-}
-.fm-logo { height: 41px; width: auto; object-fit: contain; }
-.fm-brand-btm { display: flex; flex-direction: column; align-items: center; gap: 32px; }
-.fm-tagline {
-  max-width: 269px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.2;
-}
-.fm-socials { display: flex; align-items: center; gap: 12px; }
-.fm-socials a {
-  width: 40px; height: 40px;
-  border-radius: 50px;
-  background: #fff;
-  display: flex; align-items: center; justify-content: center;
-  text-decoration: none;
-}
-/* content: whatsapp + legal + copyright */
-.fm-content { padding: 4px 22px 12px; display: flex; flex-direction: column; gap: 34px; }
-.fm-whatsapp { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.fm-wa-head { color: #000; font-size: 20px; font-weight: 600; line-height: 1.3; }
-.fm-wa-sub { color: rgba(0, 0, 0, 0.5); font-size: 13px; font-weight: 400; line-height: 1.5; }
-.fm-wa-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 12px 20px; background: #fff; border-radius: 50px;
-  outline: 1px rgba(0, 0, 0, 0.12) solid; outline-offset: -1px;
-  box-shadow: 0px 4px 10px -2px rgba(0, 0, 0, 0.08); text-decoration: none;
-}
-.fm-wa-btn span { color: #000; font-size: 14px; font-weight: 600; }
-.fm-wa-note { color: rgba(0, 0, 0, 0.4); font-size: 12px; font-weight: 400; }
-.fm-legal { display: flex; flex-direction: column; gap: 20px; }
-.fm-legal-title { color: #000; font-size: 18px; font-weight: 500; line-height: 1.2; }
-.fm-legal-links { display: flex; flex-direction: column; gap: 12px; }
-.fm-legal-links a { color: rgba(0, 0, 0, 0.5); font-size: 14px; font-weight: 400; line-height: 1.2; text-decoration: none; }
-.fm-copy { display: flex; align-items: center; gap: 9px; }
-.fm-copy p { color: #000; font-size: 14px; font-weight: 400; line-height: 1.2; }
-.fm-copy .up { text-transform: uppercase; }
-/* big translucent HANTRIX watermark */
-.fm-watermark {
-  width: 100%;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.1);
-  font-size: 84px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-@media (max-width: 400px) {
-  .fm-watermark { font-size: 72px; }
 }
