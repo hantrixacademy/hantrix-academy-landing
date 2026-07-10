@@ -76,9 +76,9 @@
     .btn-outline { background: #fff; color: #000; border: 1px solid var(--line); }
     .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
 
-    /* failure illustration — image shown as a rounded tile */
-    .fail-illo { width: 100%; max-width: 440px; aspect-ratio: 3 / 2; border-radius: 22px; overflow: hidden; }
-    .fail-illo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* failure illustration — compact, same visual weight as the success one */
+    .fail-illo { width: 240px; max-width: 100%; }
+    .fail-illo img { width: 100%; height: auto; display: block; }
 
     /* verifying spinner */
     .spinner {
@@ -103,7 +103,7 @@
       /* keep the buttons side-by-side so the card stays short */
       .card__actions { gap: 8px; }
       .btn { font-size: 13px; padding: 10px 16px; }
-      .fail-illo { width: 130px; height: 130px; }
+      .fail-illo { width: 160px; }
     }
   </style>
 </head>
