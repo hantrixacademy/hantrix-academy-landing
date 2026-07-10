@@ -29,31 +29,31 @@
     }
     a { text-decoration: none; color: inherit; }
 
-    /* card — Figma: 893px wide, padding 50, radius 40, gap 80, centered */
+    /* card — compact version */
     .card {
       background: #fff;
-      width: 893px;
+      width: 560px;
       max-width: 100%;
-      padding: 50px;
-      border-radius: 40px;
+      padding: 40px;
+      border-radius: 32px;
       box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 80px;
+      gap: 44px;
       text-align: center;
     }
-    .card__illo { width: 320px; height: 320px; max-width: 100%; object-fit: contain; display: block; }
+    .card__illo { width: 200px; height: 200px; max-width: 100%; object-fit: contain; display: block; }
 
-    .card__body { display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; }
-    .card__text { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
-    .card__title { font-size: 44px; font-weight: 500; line-height: 1.2; text-transform: capitalize; }
-    .card__sub { font-size: 16px; font-weight: 400; line-height: 1.4; color: var(--muted); max-width: 730px; }
+    .card__body { display: flex; flex-direction: column; align-items: center; gap: 26px; width: 100%; }
+    .card__text { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .card__title { font-size: 30px; font-weight: 500; line-height: 1.2; text-transform: capitalize; }
+    .card__sub { font-size: 15px; font-weight: 400; line-height: 1.45; color: var(--muted); max-width: 440px; }
 
     .card__actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
-      padding: 12px 24px; border-radius: 62px; font-size: 18px; font-weight: 500; line-height: 1.2;
+      padding: 11px 22px; border-radius: 62px; font-size: 16px; font-weight: 500; line-height: 1.2;
       white-space: nowrap; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
     .btn-primary {
@@ -66,11 +66,12 @@
 
     /* failure icon (replaces the illustration) */
     .fail-icon {
-      width: 200px; height: 200px; border-radius: 50%;
+      width: 140px; height: 140px; border-radius: 50%;
       background: rgba(247, 148, 29, 0.08);
       display: flex; align-items: center; justify-content: center;
       color: var(--orange);
     }
+    .fail-icon svg { width: 66px; height: 66px; }
 
     /* verifying spinner */
     .spinner {
