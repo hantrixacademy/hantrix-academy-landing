@@ -76,14 +76,9 @@
     .btn-outline { background: #fff; color: #000; border: 1px solid var(--line); }
     .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
 
-    /* failure icon (replaces the illustration) */
-    .fail-icon {
-      width: 140px; height: 140px; border-radius: 50%;
-      background: rgba(247, 148, 29, 0.08);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--orange);
-    }
-    .fail-icon svg { width: 66px; height: 66px; }
+    /* failure illustration (card + red X) */
+    .fail-illo { width: 200px; height: 200px; max-width: 100%; display: flex; align-items: center; justify-content: center; }
+    .fail-illo svg { width: 100%; height: 100%; }
 
     /* verifying spinner */
     .spinner {
@@ -108,8 +103,7 @@
       /* keep the buttons side-by-side so the card stays short */
       .card__actions { gap: 8px; }
       .btn { font-size: 13px; padding: 10px 16px; }
-      .fail-icon { width: 108px; height: 108px; }
-      .fail-icon svg { width: 50px; height: 50px; }
+      .fail-illo { width: 130px; height: 130px; }
     }
   </style>
 </head>
@@ -141,17 +135,37 @@
 
   <!-- Failure / incomplete -->
   <div class="card hidden" id="failure">
-    <div class="fail-icon">
-      <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <div class="fail-illo">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- sparkles / confetti -->
+        <path d="M56 44c7 3 7 11 0 13" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+        <path d="M150 38c5-4 13-2 12 6" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+        <path d="M80 60l2.5-7 2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5z" fill="#111"/>
+        <path d="M172 122l2-6 2 6 6 2-6 2-2 6-2-6-6-2z" fill="#111"/>
+        <circle cx="44" cy="98" r="3" fill="#111"/>
+        <circle cx="122" cy="40" r="2.5" fill="#111"/>
+        <circle cx="178" cy="150" r="3" fill="#111"/>
+        <path d="M56 158c-7 0-11-5-11-10 0-4 3-6 6-5 3 1 2 5-1 4" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- credit card -->
+        <g transform="rotate(-7 100 110)">
+          <rect x="46" y="76" width="120" height="76" rx="9" fill="#fff" stroke="#111" stroke-width="3"/>
+          <rect x="46" y="93" width="120" height="16" fill="#111"/>
+          <circle cx="70" cy="132" r="9" fill="#f7941d"/>
+          <path d="M150 126l9 9M159 126l-9 9" stroke="#111" stroke-width="2.4" stroke-linecap="round"/>
+        </g>
+        <!-- red X badge -->
+        <circle cx="152" cy="78" r="31" fill="#ff5b5f"/>
+        <path d="M141 67l22 22M163 67l-22 22" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+      </svg>
     </div>
     <div class="card__body">
       <div class="card__text">
-        <h1 class="card__title">Payment Not Completed</h1>
-        <p class="card__sub">Your payment wasn't completed and no charge was made. You can try again, or head back to the home page.</p>
+        <h1 class="card__title">Oops! Something Went Wrong.</h1>
+        <p class="card__sub">Your payment could not be completed. Please check your payment details and try again. If the issue persists, contact our support team.</p>
       </div>
       <div class="card__actions">
         <a class="btn btn-primary" href="checkout.html">Try Again</a>
-        <a class="btn btn-outline" href="index.html">Back to Home</a>
+        <a class="btn btn-outline" href="https://wa.me/919074174802?text=Hi%2C%20I%20had%20a%20problem%20completing%20my%20payment%20on%20Hantrix%20Academy.%20Can%20you%20help%3F" target="_blank" rel="noopener">Contact Support</a>
       </div>
     </div>
   </div>
