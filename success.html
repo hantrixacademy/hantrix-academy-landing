@@ -158,6 +158,8 @@
     var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
     var params = new URLSearchParams(window.location.search);
     var orderId = params.get('order_id');
+    // this order is now resolved on this page — clear the pending flag
+    try { sessionStorage.removeItem('hntx_order'); } catch (e) {}
 
     function show(id) {
       ['verifying', 'success', 'failure'].forEach(function (k) {

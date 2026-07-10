@@ -325,14 +325,30 @@
           throw new Error(data.error || 'Payment init failed');
         }
         if (window.fbq) fbq('track', 'InitiateCheckout', { value: 16999, currency: 'INR', content_name: 'Hantrix Academy Enrollment' });
+        // remember this order so if the user hits "Yes, Leave" on the gateway
+        // (which just sends them back here, not to the return_url) we can show
+        // the result page for it.
+        try { sessionStorage.setItem('hntx_order', data.order_id); } catch (e) {}
         var cashfree = await Cashfree({ mode: 'production' });
         cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
       } catch (err) {
+        try { sessionStorage.removeItem('hntx_order'); } catch (e) {}
         showPayErr((err && err.message) ? err.message : 'Payment failed. Please try again.');
         btnEl.disabled = false;
         btnEl.textContent = original;
       }
     }
+
+    // If the user returns to this page from the gateway with an order still
+    // pending (e.g. they clicked "Yes, Leave"), route them to the result page.
+    window.addEventListener('pageshow', function () {
+      var oid;
+      try { oid = sessionStorage.getItem('hntx_order'); } catch (e) { oid = null; }
+      if (oid) {
+        try { sessionStorage.removeItem('hntx_order'); } catch (e) {}
+        location.replace('success.html?order_id=' + encodeURIComponent(oid));
+      }
+    });
 
     document.getElementById('payBtn').addEventListener('click', function () {
       // run all checks (don't short-circuit, so every bad field lights up)
