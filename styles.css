@@ -1591,10 +1591,14 @@ svg {
   }
 
   /* platforms — centered heading, small illustration top-right, smaller logos */
+  /* Figma mobile: heading on top, then a full-width 122px frame with the
+     illustration on the right, then the ticker below. */
   .platforms__top {
     padding: 0;
-    position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
   .platforms__heading {
     width: 100%;
@@ -1603,12 +1607,23 @@ svg {
     font-size: 24px;
   }
   .platforms__illustration {
-    display: block;
-    position: absolute;
-    top: -6px;
-    right: 0;
-    width: 80px;
-    height: 68px;
+    position: static;
+    align-self: stretch;
+    width: 100%;
+    height: 122px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    overflow: visible;
+    transform: none;
+  }
+  .platforms__illustration img {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: 122px;
+    max-width: none;
   }
   .platforms__logos {
     padding: 20px 0;
