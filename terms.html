@@ -274,7 +274,8 @@
     @media (max-width: 899px) {
       html, body { max-width: 100vw; }
       .navbar { height: auto; padding: 12px 16px; flex-direction: column; align-items: stretch; }
-      .navbar-inner { padding: 18px 20px; }
+      .navbar-inner { padding: 16px 20px; background: rgba(255,255,255,0.8); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border-color: rgba(255,255,255,0.4); box-shadow: 0 10px 35px rgba(0,0,0,0.12); }
+      .navbar.is-floating .navbar-inner { transform: none; }
       .nav-links, .navbar-inner .btn-join { display: none; }
       .navbar-burger { display: flex; }
       .navbar img { height: 26px; }
