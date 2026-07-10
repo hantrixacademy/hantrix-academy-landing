@@ -76,9 +76,9 @@
     .btn-outline { background: #fff; color: #000; border: 1px solid var(--line); }
     .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
 
-    /* failure illustration (card + red X) */
-    .fail-illo { width: 200px; height: 200px; max-width: 100%; display: flex; align-items: center; justify-content: center; }
-    .fail-illo svg { width: 100%; height: 100%; }
+    /* failure illustration — image shown as a rounded tile */
+    .fail-illo { width: 100%; max-width: 440px; aspect-ratio: 3 / 2; border-radius: 22px; overflow: hidden; }
+    .fail-illo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* verifying spinner */
     .spinner {
@@ -136,27 +136,7 @@
   <!-- Failure / incomplete -->
   <div class="card hidden" id="failure">
     <div class="fail-illo">
-      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- sparkles / confetti -->
-        <path d="M56 44c7 3 7 11 0 13" stroke="#111" stroke-width="2" stroke-linecap="round"/>
-        <path d="M150 38c5-4 13-2 12 6" stroke="#111" stroke-width="2" stroke-linecap="round"/>
-        <path d="M80 60l2.5-7 2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5z" fill="#111"/>
-        <path d="M172 122l2-6 2 6 6 2-6 2-2 6-2-6-6-2z" fill="#111"/>
-        <circle cx="44" cy="98" r="3" fill="#111"/>
-        <circle cx="122" cy="40" r="2.5" fill="#111"/>
-        <circle cx="178" cy="150" r="3" fill="#111"/>
-        <path d="M56 158c-7 0-11-5-11-10 0-4 3-6 6-5 3 1 2 5-1 4" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <!-- credit card -->
-        <g transform="rotate(-7 100 110)">
-          <rect x="46" y="76" width="120" height="76" rx="9" fill="#fff" stroke="#111" stroke-width="3"/>
-          <rect x="46" y="93" width="120" height="16" fill="#111"/>
-          <circle cx="70" cy="132" r="9" fill="#f7941d"/>
-          <path d="M150 126l9 9M159 126l-9 9" stroke="#111" stroke-width="2.4" stroke-linecap="round"/>
-        </g>
-        <!-- red X badge -->
-        <circle cx="152" cy="78" r="31" fill="#ff5b5f"/>
-        <path d="M141 67l22 22M163 67l-22 22" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      </svg>
+      <img src="assets/payment-failed.png" alt="Payment failed" />
     </div>
     <div class="card__body">
       <div class="card__text">
