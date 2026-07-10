@@ -44,6 +44,7 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth; /* smooth anchor scrolling for the nav links */
   /* No overflow-x guard on the root — it breaks the sticky navbar and the
      sticky pricing card. Horizontal overflow is contained at its sources
      instead (testimonials gallery clip + vertical-only reveals on mobile). */
@@ -84,6 +85,17 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 60px;
+}
+
+/* nav anchor targets — offset so the sticky navbar doesn't cover the heading */
+#students,
+#journey,
+#pricing,
+#faq {
+  scroll-margin-top: 100px;
+}
+#home {
+  scroll-margin-top: 0;
 }
 
 /* =============================================================
