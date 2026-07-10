@@ -1626,32 +1626,32 @@ svg {
     max-width: none;
   }
   .platforms__logos {
-    padding: 20px 0;
-    border-radius: 15px;
+    padding: 26px 0;
+    border-radius: 18px;
   }
   .ticker-group {
-    gap: 32px;
-    padding-right: 32px;
+    gap: 36px;
+    padding-right: 36px;
   }
   .plogo--meta {
-    width: 49px;
-    height: 11px;
+    width: 64px;
+    height: 14px;
   }
   .plogo--insta {
-    width: 50px;
-    height: 15px;
+    width: 65px;
+    height: 20px;
   }
   .plogo--tiktok {
-    width: 51px;
-    height: 16px;
+    width: 66px;
+    height: 21px;
   }
   .plogo--stripe {
-    width: 36px;
-    height: 15px;
+    width: 47px;
+    height: 20px;
   }
   .plogo--shopify {
-    width: 45px;
-    height: 14px;
+    width: 59px;
+    height: 18px;
   }
 
   /* pain points — match Figma mobile */
