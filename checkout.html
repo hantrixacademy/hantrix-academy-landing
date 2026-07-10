@@ -309,8 +309,16 @@
         var res = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          // Cashfree stores these customer details on the order in your account
-          body: JSON.stringify({ name: name, email: email, phone: phone })
+          // Cashfree stores these customer details on the order in your account.
+          // return_url: where Cashfree sends the user back after pay/abandon.
+          // Only takes effect if the worker reads it (see note); harmless otherwise.
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone,
+            return_url: location.origin + '/',
+            returnUrl: location.origin + '/'
+          })
         });
         var data = await res.json();
         if (!res.ok || !data.payment_session_id) {
