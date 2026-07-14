@@ -201,30 +201,30 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 11px;
   margin-bottom: -20px;
 }
 .offer-cut {
-  font-size: 24px;
+  font-size: 17px;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.38);
   text-decoration: line-through;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 1.5px;
 }
 .offer-div {
   width: 2px;
-  height: 30px;
+  height: 20px;
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.15);
 }
 .offer-badge {
-  border: 2px solid var(--orange);
+  border: 1.5px solid var(--orange);
   color: var(--orange);
   font-weight: 800;
-  font-size: 21px;
+  font-size: 14px;
   letter-spacing: 0.01em;
-  padding: 9px 20px;
-  border-radius: 16px;
+  padding: 6px 13px;
+  border-radius: 11px;
 }
 .offer-sub {
   width: 100%;
