@@ -1541,12 +1541,18 @@ svg {
   .navbar.is-floating .navbar__inner {
     transform: none;
   }
-  .nav-links,
-  .navbar__cta {
+  .nav-links {
     display: none;
   }
+  /* mobile: show the Join Now button instead of the hamburger */
+  .navbar__cta {
+    display: inline-flex;
+  }
   .navbar__burger {
-    display: flex;
+    display: none;
+  }
+  .mobile-menu {
+    display: none;
   }
   .logo__img {
     height: 26px;
