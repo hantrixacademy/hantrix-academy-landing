@@ -201,19 +201,19 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 11px;
+  gap: 9px;
   margin-bottom: -20px;
 }
 .offer-cut {
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.38);
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;
 }
 .offer-div {
-  width: 2px;
-  height: 20px;
+  width: 1.5px;
+  height: 14px;
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.15);
 }
@@ -221,10 +221,10 @@ button {
   border: 1.5px solid var(--orange);
   color: var(--orange);
   font-weight: 800;
-  font-size: 14px;
+  font-size: 11px;
   letter-spacing: 0.01em;
-  padding: 6px 13px;
-  border-radius: 11px;
+  padding: 4px 10px;
+  border-radius: 9px;
 }
 .offer-sub {
   width: 100%;
