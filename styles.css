@@ -193,56 +193,6 @@ button {
   background: var(--orange);
   color: var(--white);
   box-shadow: var(--shadow-btn), var(--shadow-btn-inset);
-  gap: 8px;
-}
-/* pricing button: struck-through original + real price */
-.btn-cta .price-cut {
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 600;
-}
-.btn-cta .price-now {
-  font-weight: 800;
-}
-/* stacked "limited time offer" CTA */
-.btn-cta.cta-offer {
-  flex-direction: column;
-  gap: 6px;
-  padding: 18px 12px;
-  line-height: 1.1;
-}
-.cta-top {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.cta-top .price-cut {
-  font-size: 17px;
-}
-.cta-div {
-  width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.5);
-}
-.cta-badge {
-  background: #ffffff;
-  color: var(--orange);
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  padding: 5px 12px;
-  border-radius: 20px;
-}
-.cta-main {
-  font-size: clamp(20px, 4.6vw, 26px);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-.cta-sub {
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ----- Cards ----- */
