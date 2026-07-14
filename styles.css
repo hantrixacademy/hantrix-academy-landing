@@ -193,6 +193,17 @@ button {
   background: var(--orange);
   color: var(--white);
   box-shadow: var(--shadow-btn), var(--shadow-btn-inset);
+  gap: 8px;
+}
+/* pricing button: struck-through original + real price */
+.btn-cta .price-cut {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+.btn-cta .price-now {
+  font-weight: 700;
 }
 
 /* ----- Cards ----- */
