@@ -235,6 +235,13 @@ button {
   font-weight: 500;
   color: var(--text-muted);
 }
+/* desktop — larger struck price and offer badge */
+@media (min-width: 641px) {
+  .offer-top { gap: 12px; }
+  .offer-cut { font-size: 19px; }
+  .offer-div { height: 22px; width: 2px; }
+  .offer-badge { font-size: 15px; padding: 6px 14px; border-radius: 12px; }
+}
 
 /* ----- Cards ----- */
 .card {
