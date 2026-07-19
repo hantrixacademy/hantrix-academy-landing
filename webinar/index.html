@@ -55,9 +55,8 @@
           <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         </span>
         <h2 style="font-size:32px; font-weight:600;">You're Registered!</h2>
-        <p style="font-size:16px; color:rgba(0,0,0,.6); line-height:1.6; max-width:420px;">Thank you, {{ savedName }}. Your seat{{ seatWord }} for the Hantrix Mega Offline Event 2026 {{ seatVerb }} reserved. A confirmation with full event details will be sent to <b style="color:#000;">{{ savedEmail }}</b>.</p>
+        <p style="font-size:16px; color:rgba(0,0,0,.6); line-height:1.6; max-width:420px;">Thank you, {{ savedName }}. Your seat for the Hantrix Mega Offline Event 2026 is reserved. A confirmation with full event details will be sent to <b style="color:#000;">{{ savedEmail }}</b>.</p>
         <div style="width:100%; background:#fdf0e0; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:12px; text-align:left;">
-          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Seats</span><span style="font-weight:600;">{{ savedSeats }}</span></div>
           <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Amount</span><span style="font-weight:600;">₹{{ savedTotal }}</span></div>
           <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Date &amp; Location</span><span style="font-weight:600;">To be announced</span></div>
         </div>
@@ -100,19 +99,11 @@
               <option value="Other">Other</option>
             </select>
           </div>
-          <div style="display:flex; flex-direction:column; gap:7px;">
-            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Number Of Seats</label>
-            <div style="display:flex; align-items:center; gap:14px;">
-              <button onClick="{{ dec }}" style="width:46px; height:46px; border-radius:12px; border:1px solid rgba(0,0,0,.1); background:#fff; font-size:22px; font-weight:500; cursor:pointer; color:#000; flex-shrink:0;">−</button>
-              <div style="flex:1; text-align:center; font-size:20px; font-weight:600;">{{ form.seats }}</div>
-              <button onClick="{{ inc }}" style="width:46px; height:46px; border-radius:12px; border:1px solid rgba(0,0,0,.1); background:#fff; font-size:22px; font-weight:500; cursor:pointer; color:#000; flex-shrink:0;">+</button>
-            </div>
-          </div>
         </div>
 
         <!-- summary -->
         <div style="background:#f5f5f5; border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:14px; color:rgba(0,0,0,.6);"><span>₹999 × {{ form.seats }} seat{{ seatWord }}</span><span>₹{{ total }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px; color:rgba(0,0,0,.6);"><span>Registration fee · 1 seat</span><span>₹{{ total }}</span></div>
           <div style="height:1px; background:rgba(0,0,0,.08);"></div>
           <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:700;"><span>Total</span><span style="color:#f7941d;">₹{{ total }}</span></div>
         </div>
@@ -131,10 +122,10 @@
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
-    form: { name: '', email: '', phone: '', source: '', seats: 1 },
+    form: { name: '', email: '', phone: '', source: '' },
     submitted: false,
     error: '',
-    saved: { name: '', email: '', seats: 1, total: '999' },
+    saved: { name: '', email: '', total: '999' },
   };
 
   PRICE = 999;
@@ -150,39 +141,32 @@ class Component extends DCLogic {
     if (!f.name.trim()) return this.setState({ error: 'Please enter your full name.' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) return this.setState({ error: 'Please enter a valid email address.' });
     if (f.phone.replace(/\D/g, '').length < 8) return this.setState({ error: 'Please enter a valid phone number.' });
-    const total = this.fmt(f.seats * this.PRICE);
     this.setState({
       submitted: true,
       error: '',
-      saved: { name: f.name.trim().split(' ')[0], email: f.email.trim(), seats: f.seats, total },
+      saved: { name: f.name.trim().split(' ')[0], email: f.email.trim(), total: this.fmt(this.PRICE) },
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   reset = () => {
-    this.setState({ form: { name: '', email: '', phone: '', source: '', seats: 1 }, submitted: false, error: '' });
+    this.setState({ form: { name: '', email: '', phone: '', source: '' }, submitted: false, error: '' });
   };
 
   renderVals() {
     const f = this.state.form;
-    const seats = f.seats;
     return {
       form: f,
       submitted: this.state.submitted,
       notSubmitted: !this.state.submitted,
       error: this.state.error,
-      total: this.fmt(seats * this.PRICE),
-      seatWord: seats === 1 ? '' : 's',
-      seatVerb: seats === 1 ? 'is' : 'are',
+      total: this.fmt(this.PRICE),
       sourceColor: f.source ? '#000' : 'rgba(0,0,0,.4)',
       savedName: this.state.saved.name,
       savedEmail: this.state.saved.email,
-      savedSeats: this.state.saved.seats,
       savedTotal: this.state.saved.total,
       submit: this.submit,
       reset: this.reset,
-      inc: () => this.set('seats', Math.min(20, seats + 1)),
-      dec: () => this.set('seats', Math.max(1, seats - 1)),
       onName: (e) => this.set('name', e.target.value),
       onEmail: (e) => this.set('email', e.target.value),
       onPhone: (e) => this.set('phone', e.target.value),
