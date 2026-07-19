@@ -76,16 +76,19 @@
 
         <div style="display:flex; flex-direction:column; gap:18px;">
           <div style="display:flex; flex-direction:column; gap:7px;">
-            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Full Name</label>
-            <input value="{{ form.name }}" onInput="{{ onName }}" placeholder="Your full name" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Full Name <span style="color:#e11d48;">*</span></label>
+            <input value="{{ form.name }}" onInput="{{ onName }}" placeholder="Your full name" style="padding:13px 15px; background:#fff; border:1px solid {{ nameBorder }}; border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <sc-if value="{{ nameErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#e11d48;">{{ nameErr }}</div></sc-if>
           </div>
           <div style="display:flex; flex-direction:column; gap:7px;">
-            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Email</label>
-            <input value="{{ form.email }}" onInput="{{ onEmail }}" type="email" placeholder="you@example.com" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Email <span style="color:#e11d48;">*</span></label>
+            <input value="{{ form.email }}" onInput="{{ onEmail }}" type="email" placeholder="you@example.com" style="padding:13px 15px; background:#fff; border:1px solid {{ emailBorder }}; border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <sc-if value="{{ emailErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#e11d48;">{{ emailErr }}</div></sc-if>
           </div>
           <div style="display:flex; flex-direction:column; gap:7px;">
-            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Phone / WhatsApp</label>
-            <input value="{{ form.phone }}" onInput="{{ onPhone }}" type="tel" placeholder="+91 00000 00000" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Phone / WhatsApp <span style="color:#e11d48;">*</span></label>
+            <input value="{{ form.phone }}" onInput="{{ onPhone }}" type="tel" inputmode="numeric" placeholder="+91 00000 00000" style="padding:13px 15px; background:#fff; border:1px solid {{ phoneBorder }}; border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+            <sc-if value="{{ phoneErr }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#e11d48;">{{ phoneErr }}</div></sc-if>
           </div>
           <div style="display:flex; flex-direction:column; gap:7px;">
             <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">How Did You Hear About Us?</label>
@@ -108,10 +111,6 @@
           <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:700;"><span>Total</span><span style="color:#f7941d;">₹{{ total }}</span></div>
         </div>
 
-        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
-          <div style="background:#FEF1F1; color:#E50000; font-size:13px; font-weight:500; padding:12px 14px; border-radius:12px;">{{ error }}</div>
-        </sc-if>
-
         <button onClick="{{ submit }}" style="width:100%; padding:15px; border-radius:62px; background:#f7941d; color:#fff; font-weight:600; font-size:18px; border:none; cursor:pointer; box-shadow:0px 11px 13px -5px rgba(0,0,0,.2), inset 0px 2px 0px 0px rgba(0,0,0,.25);">Complete Registration — ₹{{ total }}</button>
         <p style="font-size:12px; color:rgba(0,0,0,.4); text-align:center; line-height:1.5;">By registering you agree to receive event updates via email and WhatsApp. Seats are confirmed on a first-come basis.</p>
       </div>
@@ -123,54 +122,79 @@
 class Component extends DCLogic {
   state = {
     form: { name: '', email: '', phone: '', source: '' },
+    errors: { name: '', email: '', phone: '' },
     submitted: false,
-    error: '',
     saved: { name: '', email: '', total: '999' },
   };
 
   PRICE = 999;
+  EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   fmt(n) { return n.toLocaleString('en-IN'); }
 
   set(key, val) {
-    this.setState(s => ({ form: { ...s.form, [key]: val }, error: '' }));
+    // update the field and clear that field's error as the user fixes it
+    this.setState(s => ({ form: { ...s.form, [key]: val }, errors: { ...s.errors, [key]: '' } }));
+  }
+
+  // returns an error message, or '' when the field is valid
+  validate(field, f) {
+    if (field === 'name') return f.name.trim().length >= 2 ? '' : 'Please enter your full name.';
+    if (field === 'email') return this.EMAIL_RE.test(f.email.trim()) ? '' : 'Please enter a valid email address.';
+    if (field === 'phone') {
+      let d = f.phone.replace(/\D/g, '');
+      if (d.length === 12 && d.slice(0, 2) === '91') d = d.slice(2);   // strip +91
+      if (d.length === 11 && d[0] === '0') d = d.slice(1);             // strip leading 0
+      if (!d) return 'Please enter your phone number.';
+      return /^[6-9]\d{9}$/.test(d) ? '' : 'Enter a valid 10-digit mobile number.';
+    }
+    return '';
   }
 
   submit = () => {
     const f = this.state.form;
-    if (!f.name.trim()) return this.setState({ error: 'Please enter your full name.' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) return this.setState({ error: 'Please enter a valid email address.' });
-    if (f.phone.replace(/\D/g, '').length < 8) return this.setState({ error: 'Please enter a valid phone number.' });
+    const errors = {
+      name: this.validate('name', f),
+      email: this.validate('email', f),
+      phone: this.validate('phone', f),
+    };
+    if (errors.name || errors.email || errors.phone) {
+      this.setState({ errors });
+      return;
+    }
     this.setState({
       submitted: true,
-      error: '',
+      errors: { name: '', email: '', phone: '' },
       saved: { name: f.name.trim().split(' ')[0], email: f.email.trim(), total: this.fmt(this.PRICE) },
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   reset = () => {
-    this.setState({ form: { name: '', email: '', phone: '', source: '' }, submitted: false, error: '' });
+    this.setState({ form: { name: '', email: '', phone: '', source: '' }, errors: { name: '', email: '', phone: '' }, submitted: false });
   };
 
   renderVals() {
     const f = this.state.form;
+    const errs = this.state.errors;
+    const bd = (msg) => msg ? '#e11d48' : 'rgba(0,0,0,.1)';
     return {
       form: f,
       submitted: this.state.submitted,
       notSubmitted: !this.state.submitted,
-      error: this.state.error,
       total: this.fmt(this.PRICE),
+      nameErr: errs.name, emailErr: errs.email, phoneErr: errs.phone,
+      nameBorder: bd(errs.name), emailBorder: bd(errs.email), phoneBorder: bd(errs.phone),
       sourceColor: f.source ? '#000' : 'rgba(0,0,0,.4)',
       savedName: this.state.saved.name,
       savedEmail: this.state.saved.email,
       savedTotal: this.state.saved.total,
       submit: this.submit,
       reset: this.reset,
-      onName: (e) => this.set('name', e.target.value),
-      onEmail: (e) => this.set('email', e.target.value),
-      onPhone: (e) => this.set('phone', e.target.value),
-      onSource: (e) => this.set('source', e.target.value),
+      onName: (ev) => this.set('name', ev.target.value),
+      onEmail: (ev) => this.set('email', ev.target.value),
+      onPhone: (ev) => this.set('phone', ev.target.value),
+      onSource: (ev) => this.set('source', ev.target.value),
     };
   }
 }
