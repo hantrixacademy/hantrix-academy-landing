@@ -22,7 +22,11 @@
   @keyframes hx-pop { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
   @keyframes hx-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-  /* ---------- Mobile fit ---------- */
+  /* ---------- Responsive fit ---------- */
+  html, body { overflow-x: hidden; }
+  /* center vertically when the form fits, but top-align (no clipping) when it's
+     taller than the screen — e.g. landscape phones / short windows */
+  .hx-page { justify-content: safe center !important; }
   @media (max-width: 560px) {
     /* start from the top so a tall form can scroll instead of clipping */
     .hx-page { justify-content: flex-start !important; padding: 20px 14px 28px !important; gap: 18px !important; }
