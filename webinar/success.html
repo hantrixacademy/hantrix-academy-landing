@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You — Hantrix Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #f7941d;
+      --bg: #f5f5f5;
+      --text: #000;
+      --muted: rgba(0, 0, 0, 0.5);
+      --line: rgba(0, 0, 0, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* the registration page, blurred, as the background */
+    .bg-frame {
+      position: fixed; inset: 0; width: 100%; height: 100%; border: 0;
+      pointer-events: none; z-index: 0;
+      filter: blur(11px); transform: scale(1.06); transform-origin: center;
+    }
+    /* dim layer + centres the card */
+    .overlay {
+      position: fixed; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background: rgba(20, 18, 16, 0.4);
+    }
+    .card { position: relative; z-index: 2; }
+
+    /* card — compact version */
+    .card {
+      background: #fff;
+      width: 560px;
+      max-width: 100%;
+      padding: 40px;
+      border-radius: 32px;
+      box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 44px;
+      text-align: center;
+    }
+    .card__illo { width: 200px; height: 200px; max-width: 100%; object-fit: contain; display: block; }
+
+    .card__body { display: flex; flex-direction: column; align-items: center; gap: 26px; width: 100%; }
+    .card__text { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+    .card__title { font-size: 30px; font-weight: 500; line-height: 1.2; text-transform: capitalize; }
+    .card__sub { font-size: 15px; font-weight: 400; line-height: 1.45; color: var(--muted); max-width: 440px; }
+
+    .card__actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 22px; border-radius: 62px; font-size: 16px; font-weight: 500; line-height: 1.2;
+      white-space: nowrap; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-primary {
+      background: var(--orange); color: #fff;
+      box-shadow: 0px 11px 13px -5px rgba(0, 0, 0, 0.2), inset 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-outline { background: #fff; color: #000; border: 1px solid var(--line); }
+    .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
+
+    /* failure illustration — larger, but the card size is unchanged */
+    .fail-illo { width: 340px; max-width: 100%; }
+    .fail-illo img { width: 100%; height: auto; display: block; }
+
+    /* verifying spinner */
+    .spinner {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 4px solid rgba(247, 148, 29, 0.2); border-top-color: var(--orange);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .verifying { gap: 28px; }
+    .verifying p { font-size: 16px; color: var(--muted); }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .card { padding: 26px 20px; gap: 22px; border-radius: 26px; }
+      .card__illo { width: 130px; height: 130px; }
+      .card__body { gap: 18px; }
+      .card__text { gap: 8px; }
+      .card__title { font-size: 22px; }
+      .card__sub { font-size: 12.5px; max-width: 320px; }
+      .card__actions { gap: 8px; }
+      .btn { font-size: 13px; padding: 10px 16px; }
+      .fail-illo { width: 210px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- registration page as a blurred background -->
+  <iframe class="bg-frame" src="index.html" scrolling="no" tabindex="-1" aria-hidden="true" title=""></iframe>
+
+  <div class="overlay">
+  <!-- Verifying -->
+  <div class="card verifying" id="verifying">
+    <div class="spinner"></div>
+    <p>Verifying your payment…</p>
+  </div>
+
+  <!-- Success -->
+  <div class="card hidden" id="success">
+    <img class="card__illo" src="assets/success-illustration.png" alt="" />
+    <div class="card__body">
+      <div class="card__text">
+        <h1 class="card__title">You're Registered!</h1>
+        <p class="card__sub">Your registration has been successfully confirmed. We're excited to have you at the Hantrix Mega Offline Event 2026. A confirmation with full event details will be sent to your email &amp; WhatsApp.</p>
+      </div>
+      <div class="card__actions">
+        <a class="btn btn-primary" href="https://hantrixacademy.com/">Back to Home</a>
+        <a class="btn btn-outline" href="index.html">Register Another Person</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Failure / incomplete -->
+  <div class="card hidden" id="failure">
+    <div class="fail-illo">
+      <img src="assets/payment-failed.png" alt="Payment failed" />
+    </div>
+    <div class="card__body">
+      <div class="card__text">
+        <h1 class="card__title">Oops! Something Went Wrong.</h1>
+        <p class="card__sub">Your payment could not be completed. Please check your payment details and try again. If the issue persists, contact our support team.</p>
+      </div>
+      <div class="card__actions">
+        <a class="btn btn-primary" href="index.html">Try Again</a>
+        <a class="btn btn-outline" href="https://wa.me/919074174802?text=Hi%2C%20I%20had%20a%20problem%20registering%20for%20the%20Hantrix%20Mega%20Offline%20Event.%20Can%20you%20help%3F" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#25D366"/><path d="M17 14.8c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-1 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4C7 8 6.4 8.6 6.4 9.9c0 1.3 1 2.6 1.1 2.7.1.2 1.9 3 4.6 4.1.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3z" fill="#fff"/></svg>
+          Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+  </div><!-- /overlay -->
+
+  <script>
+    // ⬇️ Set this to your Cashfree Worker URL when payments are turned on.
+    var WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
+    var params = new URLSearchParams(window.location.search);
+    var orderId = params.get('order_id');
+    try { sessionStorage.removeItem('hntx_webinar_order'); } catch (e) {}
+
+    function show(id) {
+      ['verifying', 'success', 'failure'].forEach(function (k) {
+        document.getElementById(k).classList.toggle('hidden', k !== id);
+      });
+    }
+
+    if (!orderId) {
+      // reached without a payment order (registration-only mode) — show the thank-you
+      show('success');
+    } else {
+      fetch(WORKER_URL + '?order_id=' + encodeURIComponent(orderId))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          show(d && d.status === 'PAID' ? 'success' : 'failure');
+        })
+        .catch(function () {
+          // if verification fails, don't block a paying customer — show success
+          show('success');
+        });
+    }
+  </script>
+</body>
+</html>
