@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f5f5f5; color: #000; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: #f7941d; }
+  a:hover { color: #d97b06; }
+  input, select, button, textarea { font-family: inherit; }
+  @keyframes hx-pop { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+  @keyframes hx-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+</style>
+</helmet>
+
+<div style="width:100%; min-height:100vh; background:#f5f5f5; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:40px 20px;">
+
+  <img src="logo.png" alt="Hantrix Academy" style="height:40px; width:auto; display:block;">
+
+  <div style="width:100%; max-width:560px;">
+
+    <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+      <!-- SUCCESS -->
+      <div style="background:#fff; border-radius:30px; border:1px solid rgba(0,0,0,.06); padding:48px 36px; text-align:center; box-shadow:0px 11px 40px rgba(0,0,0,.08); display:flex; flex-direction:column; align-items:center; gap:22px; animation:hx-pop .4s ease;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:76px; height:76px; border-radius:50%; background:#f7941d; box-shadow:0px 11px 13px -5px rgba(247,148,29,.5); animation:hx-float 3s ease-in-out infinite;">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <h2 style="font-size:32px; font-weight:600;">You're Registered!</h2>
+        <p style="font-size:16px; color:rgba(0,0,0,.6); line-height:1.6; max-width:420px;">Thank you, {{ savedName }}. Your seat{{ seatWord }} for the Hantrix Mega Offline Event 2026 {{ seatVerb }} reserved. A confirmation with full event details will be sent to <b style="color:#000;">{{ savedEmail }}</b>.</p>
+        <div style="width:100%; background:#fdf0e0; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:12px; text-align:left;">
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Seats</span><span style="font-weight:600;">{{ savedSeats }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Amount</span><span style="font-weight:600;">₹{{ savedTotal }}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:14px;"><span style="color:rgba(0,0,0,.55);">Date &amp; Location</span><span style="font-weight:600;">To be announced</span></div>
+        </div>
+        <p style="font-size:13px; color:rgba(0,0,0,.4);">Keep an eye on your email &amp; WhatsApp for the venue and timing.</p>
+        <button onClick="{{ reset }}" style="height:44px; padding:12px 26px; border-radius:62px; background:#fff; color:#000; font-weight:500; font-size:15px; border:1px solid rgba(0,0,0,.1); cursor:pointer;">Register Another Person</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+      <!-- FORM -->
+      <div style="background:#fff; border-radius:30px; border:1px solid rgba(0,0,0,.06); padding:36px; box-shadow:0px 11px 40px rgba(0,0,0,.08); display:flex; flex-direction:column; gap:24px;">
+        <div style="display:flex; flex-direction:column; gap:8px; text-align:center;">
+          <div style="font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#f7941d;">Registration</div>
+          <h2 style="font-size:30px; font-weight:600;">Reserve Your Seat</h2>
+          <p style="font-size:14px; color:rgba(0,0,0,.5);">Hantrix Mega Offline Event 2026 · ₹999 per seat</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Full Name</label>
+            <input value="{{ form.name }}" onInput="{{ onName }}" placeholder="Your full name" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Email</label>
+            <input value="{{ form.email }}" onInput="{{ onEmail }}" type="email" placeholder="you@example.com" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Phone / WhatsApp</label>
+            <input value="{{ form.phone }}" onInput="{{ onPhone }}" type="tel" placeholder="+91 00000 00000" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; transition:border-color .15s;">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">How Did You Hear About Us?</label>
+            <select value="{{ form.source }}" onChange="{{ onSource }}" style="padding:13px 15px; background:#fff; border:1px solid rgba(0,0,0,.1); border-radius:12px; font-size:15px; outline:none; color:{{ sourceColor }}; cursor:pointer;">
+              <option value="">Select an option</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Friend / Referral">Friend / Referral</option>
+              <option value="Hantrix Student">I'm a Hantrix student</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px;">
+            <label style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:rgba(0,0,0,.7);">Number Of Seats</label>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <button onClick="{{ dec }}" style="width:46px; height:46px; border-radius:12px; border:1px solid rgba(0,0,0,.1); background:#fff; font-size:22px; font-weight:500; cursor:pointer; color:#000; flex-shrink:0;">−</button>
+              <div style="flex:1; text-align:center; font-size:20px; font-weight:600;">{{ form.seats }}</div>
+              <button onClick="{{ inc }}" style="width:46px; height:46px; border-radius:12px; border:1px solid rgba(0,0,0,.1); background:#fff; font-size:22px; font-weight:500; cursor:pointer; color:#000; flex-shrink:0;">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- summary -->
+        <div style="background:#f5f5f5; border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:14px; color:rgba(0,0,0,.6);"><span>₹999 × {{ form.seats }} seat{{ seatWord }}</span><span>₹{{ total }}</span></div>
+          <div style="height:1px; background:rgba(0,0,0,.08);"></div>
+          <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:700;"><span>Total</span><span style="color:#f7941d;">₹{{ total }}</span></div>
+        </div>
+
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FEF1F1; color:#E50000; font-size:13px; font-weight:500; padding:12px 14px; border-radius:12px;">{{ error }}</div>
+        </sc-if>
+
+        <button onClick="{{ submit }}" style="width:100%; padding:15px; border-radius:62px; background:#f7941d; color:#fff; font-weight:600; font-size:18px; border:none; cursor:pointer; box-shadow:0px 11px 13px -5px rgba(0,0,0,.2), inset 0px 2px 0px 0px rgba(0,0,0,.25);">Complete Registration — ₹{{ total }}</button>
+        <p style="font-size:12px; color:rgba(0,0,0,.4); text-align:center; line-height:1.5;">By registering you agree to receive event updates via email and WhatsApp. Seats are confirmed on a first-come basis.</p>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    form: { name: '', email: '', phone: '', source: '', seats: 1 },
+    submitted: false,
+    error: '',
+    saved: { name: '', email: '', seats: 1, total: '999' },
+  };
+
+  PRICE = 999;
+
+  fmt(n) { return n.toLocaleString('en-IN'); }
+
+  set(key, val) {
+    this.setState(s => ({ form: { ...s.form, [key]: val }, error: '' }));
+  }
+
+  submit = () => {
+    const f = this.state.form;
+    if (!f.name.trim()) return this.setState({ error: 'Please enter your full name.' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) return this.setState({ error: 'Please enter a valid email address.' });
+    if (f.phone.replace(/\D/g, '').length < 8) return this.setState({ error: 'Please enter a valid phone number.' });
+    const total = this.fmt(f.seats * this.PRICE);
+    this.setState({
+      submitted: true,
+      error: '',
+      saved: { name: f.name.trim().split(' ')[0], email: f.email.trim(), seats: f.seats, total },
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  reset = () => {
+    this.setState({ form: { name: '', email: '', phone: '', source: '', seats: 1 }, submitted: false, error: '' });
+  };
+
+  renderVals() {
+    const f = this.state.form;
+    const seats = f.seats;
+    return {
+      form: f,
+      submitted: this.state.submitted,
+      notSubmitted: !this.state.submitted,
+      error: this.state.error,
+      total: this.fmt(seats * this.PRICE),
+      seatWord: seats === 1 ? '' : 's',
+      seatVerb: seats === 1 ? 'is' : 'are',
+      sourceColor: f.source ? '#000' : 'rgba(0,0,0,.4)',
+      savedName: this.state.saved.name,
+      savedEmail: this.state.saved.email,
+      savedSeats: this.state.saved.seats,
+      savedTotal: this.state.saved.total,
+      submit: this.submit,
+      reset: this.reset,
+      inc: () => this.set('seats', Math.min(20, seats + 1)),
+      dec: () => this.set('seats', Math.max(1, seats - 1)),
+      onName: (e) => this.set('name', e.target.value),
+      onEmail: (e) => this.set('email', e.target.value),
+      onPhone: (e) => this.set('phone', e.target.value),
+      onSource: (e) => this.set('source', e.target.value),
+    };
+  }
+}
+</script>
+</body>
+</html>
