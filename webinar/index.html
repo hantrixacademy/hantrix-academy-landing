@@ -147,7 +147,18 @@ class Component extends DCLogic {
       this.setState({ errors });
       return;
     }
-    // valid — go to the confirmation page (same design as the main site)
+    // valid — remember the details so the thank-you page can show them, then redirect
+    let d = f.phone.replace(/\D/g, '');
+    if (d.length === 12 && d.slice(0, 2) === '91') d = d.slice(2);
+    if (d.length === 11 && d[0] === '0') d = d.slice(1);
+    const phoneDisplay = d.length === 10 ? '+91 ' + d.slice(0, 5) + ' ' + d.slice(5) : f.phone.trim();
+    try {
+      sessionStorage.setItem('hntx_reg', JSON.stringify({
+        name: f.name.trim(),
+        email: f.email.trim(),
+        phone: phoneDisplay,
+      }));
+    } catch (e) {}
     window.location.href = 'success.html';
   };
 

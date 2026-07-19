@@ -90,9 +90,19 @@
     .verifying { gap: 28px; }
     .verifying p { font-size: 16px; color: var(--muted); }
 
+    /* entered details on the success card */
+    .detail { width: 100%; max-width: 420px; background: #fdf0e0; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+    .detail__row { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+    .detail__row .k { color: rgba(0,0,0,.5); min-width: 84px; }
+    .detail__row .v { font-weight: 600; word-break: break-word; }
+    .detail__note { font-size: 12.5px; color: rgba(0,0,0,.5); line-height: 1.5; }
+
     .hidden { display: none !important; }
 
     @media (max-width: 640px) {
+      .detail { padding: 14px 16px; }
+      .detail__row { font-size: 13px; gap: 8px; }
+      .detail__row .k { min-width: 72px; }
       body { padding: 16px; }
       .card { padding: 26px 20px; gap: 22px; border-radius: 26px; }
       .card__illo { width: 130px; height: 130px; }
@@ -123,7 +133,12 @@
     <div class="card__body">
       <div class="card__text">
         <h1 class="card__title">You're Registered!</h1>
-        <p class="card__sub">Your registration has been successfully confirmed. We're excited to have you at the Hantrix Mega Offline Event 2026. A confirmation with full event details will be sent to your email &amp; WhatsApp.</p>
+        <p class="card__sub">Your registration has been successfully confirmed. We're excited to have you at the Hantrix Mega Offline Event 2026.</p>
+      </div>
+      <div class="detail" id="okDetail">
+        <div class="detail__row"><span class="k">Email</span><span class="v" id="okEmail">—</span></div>
+        <div class="detail__row"><span class="k">WhatsApp</span><span class="v" id="okPhone">—</span></div>
+        <div class="detail__note">📩 The venue, date, timing &amp; all event details will be shared on the WhatsApp number and email above.</div>
       </div>
       <div class="card__actions">
         <a class="btn btn-primary" href="https://hantrixacademy.com/">Back to Home</a>
@@ -159,6 +174,19 @@
     var params = new URLSearchParams(window.location.search);
     var orderId = params.get('order_id');
     try { sessionStorage.removeItem('hntx_webinar_order'); } catch (e) {}
+
+    // show the email & phone the person entered on the form
+    (function fillDetails() {
+      var d = null;
+      try { d = JSON.parse(sessionStorage.getItem('hntx_reg') || 'null'); } catch (e) {}
+      var box = document.getElementById('okDetail');
+      if (d && (d.email || d.phone)) {
+        document.getElementById('okEmail').textContent = d.email || '—';
+        document.getElementById('okPhone').textContent = d.phone || '—';
+      } else if (box) {
+        box.style.display = 'none';
+      }
+    })();
 
     function show(id) {
       ['verifying', 'success', 'failure'].forEach(function (k) {
