@@ -62,7 +62,10 @@
     .card__title { font-size: 30px; font-weight: 500; line-height: 1.2; text-transform: capitalize; }
     .card__sub { font-size: 15px; font-weight: 400; line-height: 1.45; color: var(--muted); max-width: 440px; }
 
-    .card__actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .card__actions { display: flex; align-items: stretch; gap: 12px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 480px; }
+    /* basis 230 => the two buttons sit side-by-side only when there's room for
+       BOTH at equal width; otherwise they stack full-width. Always equal. */
+    .card__actions .btn { flex: 1 1 230px; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       padding: 11px 22px; border-radius: 62px; font-size: 16px; font-weight: 500; line-height: 1.2;
