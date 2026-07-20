@@ -15,37 +15,45 @@
     h1 { font-size:20px; font-weight:700; text-align:center; margin-bottom:4px; }
     .sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px; }
     #reader { width:100%; border-radius:16px; overflow:hidden; border:1px solid var(--line); background:#000; }
-    .result { margin-top:16px; border-radius:16px; padding:22px 18px; text-align:center; display:none; }
-    .result.show { display:block; }
-    .result.ok { background:#e6f6ee; border:1px solid #b9e6cd; }
-    .result.already { background:#fff6e6; border:1px solid #f3dca6; }
-    .result.bad { background:#fdecec; border:1px solid #f5c2c2; }
-    .result .ico { font-size:40px; }
-    .result .who { font-size:24px; font-weight:800; margin-top:6px; }
-    .result .msg { font-size:14px; color:var(--muted); margin-top:6px; }
-    .result.ok .msg { color:var(--green); font-weight:600; }
-    .result.bad .msg { color:var(--red); font-weight:600; }
-    .divider { text-align:center; color:var(--muted); font-size:12px; margin:20px 0 12px; text-transform:uppercase; letter-spacing:1px; }
+    .hint { text-align:center; color:var(--muted); font-size:12.5px; margin-top:10px; }
+
+    .divider { text-align:center; color:var(--muted); font-size:12px; margin:22px 0 12px; text-transform:uppercase; letter-spacing:1px; }
     .search { display:flex; gap:8px; }
     .search input { flex:1; padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; font-family:inherit; }
     .search input:focus { border-color:var(--orange); }
-    .search button, .btn { border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:14px; border-radius:12px; padding:12px 16px; background:var(--orange); color:#fff; }
+    .search button, .btn { border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; border-radius:12px; padding:12px 16px; background:var(--orange); color:#fff; }
     .rows { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
-    .row { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .row .info { min-width:0; }
+    .row { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; }
+    .row:hover { border-color:var(--orange); }
     .row .nm { font-weight:700; font-size:15px; }
     .row .ph { font-size:12.5px; color:var(--muted); }
-    .row .act { flex-shrink:0; }
     .row .act.in { color:var(--green); font-weight:700; font-size:13px; }
-    .mini { padding:8px 12px; font-size:13px; }
-    .toggle { text-align:center; margin-top:14px; }
-    .toggle button { background:none; border:none; color:var(--orange); font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; }
+    .row .go { color:var(--orange); font-weight:700; font-size:13px; }
+
+    /* confirmation overlay */
+    .overlay { position:fixed; inset:0; background:rgba(20,18,16,.5); display:none; align-items:center; justify-content:center; padding:20px; z-index:30; }
+    .overlay.show { display:flex; }
+    .panel { background:#fff; border-radius:22px; width:400px; max-width:100%; padding:26px 22px; text-align:center; box-shadow:0 24px 60px -20px rgba(0,0,0,.3); }
+    .panel .ico { font-size:44px; }
+    .panel .who { font-size:26px; font-weight:800; margin-top:6px; word-break:break-word; }
+    .panel .meta { font-size:14px; color:var(--muted); margin-top:4px; }
+    .panel .banner { margin-top:14px; padding:10px 12px; border-radius:12px; font-size:13.5px; font-weight:600; }
+    .panel .banner.warn { background:#fff6e6; color:#8a6d1a; }
+    .panel .banner.ok { background:#e6f6ee; color:var(--green); }
+    .panel .banner.bad { background:#fdecec; color:var(--red); }
+    .panel .btns { display:flex; gap:10px; margin-top:20px; }
+    .panel .btns .btn { flex:1; padding:14px; font-size:16px; }
+    .btn.cancel { background:#fff; color:#111; border:1px solid var(--line); }
+    .btn.checkin { background:var(--green); }
+    .btn.close { background:#111; }
+
     /* gate */
-    .gate { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
+    .gate { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:20px; z-index:40; }
     .gate .box { background:#fff; border:1px solid var(--line); border-radius:18px; padding:28px; width:360px; max-width:100%; display:flex; flex-direction:column; gap:14px; text-align:center; }
     .gate h2 { font-size:20px; font-weight:700; }
     .gate input { padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; font-family:inherit; }
     .gate .err { color:var(--red); font-size:13px; display:none; }
+    .hidden { display:none !important; }
   </style>
 </head>
 <body>
@@ -63,12 +71,7 @@
     <div class="sub">Scan the attendee's QR pass, or search by name / phone</div>
 
     <div id="reader"></div>
-    <div class="result" id="result">
-      <div class="ico" id="rIco"></div>
-      <div class="who" id="rWho"></div>
-      <div class="msg" id="rMsg"></div>
-    </div>
-    <div class="toggle"><button id="rescan">↻ Scan next</button></div>
+    <div class="hint">Point the camera at a QR pass — you'll confirm before checking in.</div>
 
     <div class="divider">— or find manually —</div>
     <div class="search">
@@ -78,50 +81,118 @@
     <div class="rows" id="rows"></div>
   </div>
 
+  <!-- confirmation overlay -->
+  <div class="overlay" id="confirm">
+    <div class="panel">
+      <div class="ico" id="cIco">🎫</div>
+      <div class="who" id="cName">—</div>
+      <div class="meta" id="cMeta"></div>
+      <div class="banner hidden" id="cBanner"></div>
+      <div class="btns" id="cBtns"></div>
+    </div>
+  </div>
+
   <script>
     var WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
     var token = localStorage.getItem('hntx_admin') || '';
-    var scanner = null, busy = false;
+    var scanner = null, current = null, confirming = false, busy = false;
 
-    function headers(){ return { 'Content-Type':'application/json', 'x-admin-token': token }; }
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-
-    function showResult(kind, who, msg) {
-      var el = document.getElementById('result');
-      el.className = 'result show ' + kind;
-      document.getElementById('rIco').textContent = kind==='ok'?'✅':(kind==='already'?'⚠️':'❌');
-      document.getElementById('rWho').textContent = who || '';
-      document.getElementById('rMsg').textContent = msg || '';
-      if (navigator.vibrate) navigator.vibrate(kind==='ok'?120:[60,40,60]);
-    }
-
-    function doCheckin(payload, cb) {
-      if (busy) return; busy = true;
-      fetch(WORKER_URL + '/checkin', { method:'POST', headers:headers(), body:JSON.stringify(payload) })
-        .then(function(r){ if(r.status===401){ gateFail(); throw 0; } return r.json(); })
-        .then(function(d){
-          busy = false;
-          if (d.result==='ok') showResult('ok', d.name, 'Verified · ₹ paid · checked in');
-          else if (d.result==='already') showResult('already', d.name, 'Already checked in at ' + fmt(d.at));
-          else showResult('bad', 'Not valid', d.message || 'Ticket not recognised');
-          if (cb) cb(d);
-        }).catch(function(){ busy=false; });
-    }
     function fmt(s){ if(!s) return ''; var d=new Date(s); return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+    function post(path, body){ return fetch(WORKER_URL+path, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify(body) }); }
 
-    function onScan(text) {
-      if (busy) return;
-      doCheckin({ code: text });
+    // ── Step 1: look up a ticket (no check-in yet) → show the confirm panel ──
+    function lookup(payload) {
+      if (confirming || busy) return;
+      busy = true;
+      post('/lookup', payload)
+        .then(function(r){ if(r.status===401){ gateFail(); throw 0; } return r.json(); })
+        .then(function(d){ busy = false; openConfirm(d); })
+        .catch(function(){ busy = false; });
     }
 
+    function openConfirm(d) {
+      confirming = true;
+      if (scanner) { try { scanner.pause(true); } catch(e){} }
+      var banner = document.getElementById('cBanner');
+      var btns = document.getElementById('cBtns');
+      if (!d || d.result !== 'ok') {
+        document.getElementById('cIco').textContent = '❌';
+        document.getElementById('cName').textContent = 'Not valid';
+        document.getElementById('cMeta').textContent = '';
+        banner.className = 'banner bad'; banner.textContent = (d && d.message) || 'Ticket not recognised';
+        btns.innerHTML = '<button class="btn close" id="cClose">Close</button>';
+      } else {
+        current = d;
+        document.getElementById('cIco').textContent = '🎫';
+        document.getElementById('cName').textContent = d.name || '(no name)';
+        document.getElementById('cMeta').textContent = (d.phone || '') + (d.amount ? '  ·  ₹' + d.amount + ' paid' : '');
+        if (d.checked_in) {
+          banner.className = 'banner warn'; banner.textContent = '⚠️ Already checked in' + (d.at ? ' at ' + fmt(d.at) : '');
+          btns.innerHTML = '<button class="btn close" id="cClose">Close</button>';
+        } else {
+          banner.className = 'banner ok'; banner.textContent = '✓ Paid — ready to check in';
+          btns.innerHTML = '<button class="btn cancel" id="cCancel">Cancel</button><button class="btn checkin" id="cDo">Check In ✓</button>';
+        }
+      }
+      banner.classList.remove('hidden');
+      document.getElementById('confirm').classList.add('show');
+      wireConfirmButtons();
+    }
+
+    function wireConfirmButtons() {
+      var close = document.getElementById('cClose');
+      var cancel = document.getElementById('cCancel');
+      var doBtn = document.getElementById('cDo');
+      if (close) close.onclick = closeConfirm;
+      if (cancel) cancel.onclick = closeConfirm;
+      if (doBtn) doBtn.onclick = confirmCheckin;
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirm').classList.remove('show');
+      confirming = false; current = null;
+      if (scanner) { try { scanner.resume(); } catch(e){} }
+    }
+
+    // ── Step 2: staff taps "Check In" → actually mark arrived ──
+    function confirmCheckin() {
+      if (!current) return;
+      var doBtn = document.getElementById('cDo');
+      if (doBtn) { doBtn.disabled = true; doBtn.textContent = '…'; }
+      post('/checkin', { order_id: current.order_id })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var banner = document.getElementById('cBanner');
+          var btns = document.getElementById('cBtns');
+          if (d.result === 'ok') {
+            document.getElementById('cIco').textContent = '✅';
+            banner.className = 'banner ok'; banner.textContent = 'Checked in successfully';
+            if (navigator.vibrate) navigator.vibrate(120);
+          } else if (d.result === 'already') {
+            document.getElementById('cIco').textContent = '⚠️';
+            banner.className = 'banner warn'; banner.textContent = 'Already checked in' + (d.at ? ' at ' + fmt(d.at) : '');
+          } else {
+            document.getElementById('cIco').textContent = '❌';
+            banner.className = 'banner bad'; banner.textContent = d.message || 'Could not check in';
+          }
+          btns.innerHTML = '<button class="btn close" id="cClose">Done</button>';
+          wireConfirmButtons();
+          if (document.getElementById('q').value) findPeople();
+        })
+        .catch(function(){ if(doBtn){ doBtn.disabled=false; doBtn.textContent='Check In ✓'; } });
+    }
+
+    // ── Scanner ──
+    function onScan(text){ lookup({ code: text }); }
     function startScanner() {
       if (scanner) return;
       scanner = new Html5Qrcode('reader');
-      scanner.start({ facingMode: 'environment' }, { fps:10, qrbox:{width:220,height:220} }, onScan, function(){})
+      scanner.start({ facingMode:'environment' }, { fps:10, qrbox:{width:220,height:220} }, onScan, function(){})
         .catch(function(){ document.getElementById('reader').innerHTML = '<div style="color:#fff;padding:24px;text-align:center;font-size:13px;">Camera unavailable — use manual search below.</div>'; });
     }
 
-    // manual search
+    // ── Manual search → tap a person → same confirm panel ──
     function findPeople() {
       var q = document.getElementById('q').value.trim();
       if (!q) return;
@@ -132,24 +203,18 @@
           var list = (d.registrations||[]).filter(function(r){ return r.status==='PAID'; });
           if (!list.length) { rows.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:10px;">No paid registration found.</div>'; return; }
           rows.innerHTML = list.map(function(r){
-            var right = r.checked_in
-              ? '<span class="act in">✓ In</span>'
-              : '<button class="btn mini" data-oid="'+esc(r.order_id)+'">Check in</button>';
-            return '<div class="row"><div class="info"><div class="nm">'+esc(r.name)+'</div><div class="ph">'+esc(r.phone)+'</div></div><div class="act">'+right+'</div></div>';
+            var right = r.checked_in ? '<span class="act in">✓ In</span>' : '<span class="go">Check in ›</span>';
+            return '<div class="row" data-oid="'+esc(r.order_id)+'"><div><div class="nm">'+esc(r.name)+'</div><div class="ph">'+esc(r.phone)+'</div></div>'+right+'</div>';
           }).join('');
-          [].forEach.call(rows.querySelectorAll('button[data-oid]'), function(b){
-            b.addEventListener('click', function(){
-              doCheckin({ order_id: b.getAttribute('data-oid') }, function(){ findPeople(); });
-            });
+          [].forEach.call(rows.querySelectorAll('.row'), function(el){
+            el.addEventListener('click', function(){ lookup({ order_id: el.getAttribute('data-oid') }); });
           });
         }).catch(function(){});
     }
 
     function showApp(){ document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; startScanner(); }
     function gateFail(){ localStorage.removeItem('hntx_admin'); token=''; document.getElementById('gate').style.display='flex'; document.getElementById('app').style.display='none'; document.getElementById('gateErr').style.display='block'; }
-
     function tryUnlock(){
-      // validate the password against a lightweight admin call
       fetch(WORKER_URL + '/admin/list', { headers:{ 'x-admin-token': token } })
         .then(function(r){ if(r.status===401){ gateFail(); } else { showApp(); } })
         .catch(function(){ gateFail(); });
@@ -162,9 +227,9 @@
       tryUnlock();
     });
     document.getElementById('pw').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gateBtn').click(); });
-    document.getElementById('rescan').addEventListener('click', function(){ document.getElementById('result').className='result'; });
     document.getElementById('find').addEventListener('click', findPeople);
     document.getElementById('q').addEventListener('keydown', function(e){ if(e.key==='Enter') findPeople(); });
+    document.getElementById('confirm').addEventListener('click', function(e){ if(e.target.id==='confirm') closeConfirm(); });
 
     if (token) tryUnlock();
   </script>
