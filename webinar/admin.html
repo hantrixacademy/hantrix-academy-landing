@@ -34,6 +34,20 @@
     .pill.in { background:#e6f6ee; color:var(--green); }
     .pill.no { background:#f0f0f0; color:#888; }
     .empty { padding:40px; text-align:center; color:var(--muted); }
+    .lnk { border:none; background:none; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; padding:4px 6px; border-radius:6px; }
+    .lnk.edit { color:var(--orange); }
+    .lnk.del { color:#e11d48; }
+    .lnk:hover { background:rgba(0,0,0,.05); }
+    /* modal */
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
+    .modal.show { display:flex; }
+    .modal .box { background:#fff; border-radius:16px; padding:22px; width:400px; max-width:100%; display:flex; flex-direction:column; gap:12px; }
+    .modal h3 { font-size:17px; font-weight:700; }
+    .modal label { font-size:12px; font-weight:600; color:var(--muted); margin-bottom:4px; display:block; }
+    .modal input { width:100%; padding:10px 12px; font-size:14px; border:1px solid var(--line); border-radius:10px; outline:none; font-family:inherit; }
+    .modal input:focus { border-color:var(--orange); }
+    .modal .foot { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:6px; }
+    .modal .foot .right { display:flex; gap:8px; }
     /* gate */
     .gate { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
     .gate .box { background:#fff; border:1px solid var(--line); border-radius:18px; padding:28px; width:360px; max-width:100%; display:flex; flex-direction:column; gap:14px; text-align:center; }
@@ -70,10 +84,26 @@
     <input class="search" id="search" placeholder="Search name, phone or email…" />
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Status</th><th>Registered</th></tr></thead>
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
+    </div>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="box">
+      <h3>Edit registration</h3>
+      <div><label>Full name</label><input id="eName" type="text" /></div>
+      <div><label>Phone</label><input id="ePhone" type="text" /></div>
+      <div><label>Email</label><input id="eEmail" type="email" /></div>
+      <div class="foot">
+        <button class="lnk" id="eReset" style="color:#8a6d1a;display:none;">↺ Reset check-in</button>
+        <div class="right">
+          <button class="btn" id="eCancel">Cancel</button>
+          <button class="btn btn-primary" id="eSave">Save</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -93,8 +123,50 @@
       document.getElementById('empty').style.display = list.length ? 'none' : 'block';
       rows.innerHTML = list.map(function (r) {
         var pill = r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>';
-        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+pill+'</td><td>'+fmtDate(r.created_at)+'</td></tr>';
+        var acts = '<button class="lnk edit" data-oid="'+esc(r.order_id)+'">Edit</button><button class="lnk del" data-oid="'+esc(r.order_id)+'">Delete</button>';
+        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+pill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+acts+'</td></tr>';
       }).join('');
+      [].forEach.call(rows.querySelectorAll('.lnk.edit'), function(b){ b.onclick = function(){ openEdit(b.getAttribute('data-oid')); }; });
+      [].forEach.call(rows.querySelectorAll('.lnk.del'), function(b){ b.onclick = function(){ doDelete(b.getAttribute('data-oid')); }; });
+    }
+
+    function apiPost(path, body) {
+      return fetch(WORKER_URL + path, { method:'POST', headers:{ 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify(body) });
+    }
+
+    var editingId = null;
+    function openEdit(oid) {
+      var r = ALL.find(function(x){ return x.order_id === oid; });
+      if (!r) return;
+      editingId = oid;
+      document.getElementById('eName').value = r.name || '';
+      document.getElementById('ePhone').value = r.phone || '';
+      document.getElementById('eEmail').value = r.email || '';
+      document.getElementById('eReset').style.display = r.checked_in ? 'inline-block' : 'none';
+      document.getElementById('editModal').classList.add('show');
+    }
+    function closeEdit(){ document.getElementById('editModal').classList.remove('show'); editingId = null; }
+
+    document.getElementById('eCancel').addEventListener('click', closeEdit);
+    document.getElementById('editModal').addEventListener('click', function(e){ if(e.target.id==='editModal') closeEdit(); });
+    document.getElementById('eSave').addEventListener('click', function(){
+      if (!editingId) return;
+      apiPost('/admin/update', {
+        order_id: editingId,
+        name: document.getElementById('eName').value.trim(),
+        phone: document.getElementById('ePhone').value.trim(),
+        email: document.getElementById('eEmail').value.trim(),
+      }).then(function(){ closeEdit(); load(); });
+    });
+    document.getElementById('eReset').addEventListener('click', function(){
+      if (!editingId) return;
+      if (!confirm('Reset this person’s check-in so they can be scanned again?')) return;
+      apiPost('/admin/uncheckin', { order_id: editingId }).then(function(){ closeEdit(); load(); });
+    });
+    function doDelete(oid) {
+      var r = ALL.find(function(x){ return x.order_id === oid; });
+      if (!confirm('Delete registration for "' + (r ? r.name : oid) + '"? This cannot be undone.')) return;
+      apiPost('/admin/delete', { order_id: oid }).then(function(){ load(); });
     }
 
     function load() {
