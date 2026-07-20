@@ -52,12 +52,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 44px;
+      gap: 22px;
       text-align: center;
     }
     .card__illo { width: 200px; height: 200px; max-width: 100%; object-fit: contain; display: block; }
-    .illo-qr { width: 100%; max-width: 340px; height: auto; display: block; }
-    @media (max-width: 640px) { .illo-qr { max-width: 250px; } }
+    /* negative margins trim the illustration's baked-in whitespace so it sits closer to the title */
+    .illo-qr { width: 100%; max-width: 340px; height: auto; display: block; margin: -18px 0 -14px; }
+    @media (max-width: 640px) { .illo-qr { max-width: 250px; margin: -14px 0 -12px; } }
 
     .card__body { display: flex; flex-direction: column; align-items: center; gap: 26px; width: 100%; }
     .card__text { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
@@ -108,7 +109,7 @@
       .detail__row { font-size: 13px; gap: 8px; }
       .detail__row .k { min-width: 72px; }
       body { padding: 16px; }
-      .card { padding: 26px 20px; gap: 22px; border-radius: 26px; }
+      .card { padding: 26px 20px; gap: 14px; border-radius: 26px; }
       .card__illo { width: 130px; height: 130px; }
       .card__body { gap: 18px; }
       .card__text { gap: 8px; }
