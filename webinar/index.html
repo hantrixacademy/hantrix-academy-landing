@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -98,7 +99,11 @@
           <div style="display:flex; justify-content:space-between; font-size:17px; font-weight:700;"><span>Total</span><span style="color:#f7941d;">₹{{ total }}</span></div>
         </div>
 
-        <button onClick="{{ submit }}" style="width:100%; padding:15px; border-radius:62px; background:#f7941d; color:#fff; font-weight:600; font-size:18px; border:none; cursor:pointer; box-shadow:0px 11px 13px -5px rgba(0,0,0,.2), inset 0px 2px 0px 0px rgba(0,0,0,.25);">Complete Registration — ₹{{ total }}</button>
+        <sc-if value="{{ payError }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FEF1F1; color:#E50000; font-size:13px; font-weight:500; padding:12px 14px; border-radius:12px; text-align:center;">{{ payError }}</div>
+        </sc-if>
+
+        <button onClick="{{ submit }}" style="width:100%; padding:15px; border-radius:62px; background:#f7941d; color:#fff; font-weight:600; font-size:18px; border:none; cursor:pointer; box-shadow:0px 11px 13px -5px rgba(0,0,0,.2), inset 0px 2px 0px 0px rgba(0,0,0,.25);">{{ payLabel }}</button>
         <p style="font-size:12px; color:rgba(0,0,0,.4); text-align:center; line-height:1.5;">By registering you agree to receive event updates via email and WhatsApp. Seats are confirmed on a first-come basis.</p>
       </div>
     </sc-if>
@@ -110,10 +115,17 @@ class Component extends DCLogic {
   state = {
     form: { name: '', email: '', phone: '', source: '' },
     errors: { name: '', email: '', phone: '' },
+    loading: false,
+    payError: '',
   };
 
   PRICE = 999;
   EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // ⬇️ After deploying the Cloudflare Worker, paste its URL here.
+  WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
+  // 'sandbox' for testing, 'production' when going live (must match the worker's CF_BASE)
+  CF_MODE = 'sandbox';
 
   fmt(n) { return n.toLocaleString('en-IN'); }
 
@@ -136,7 +148,8 @@ class Component extends DCLogic {
     return '';
   }
 
-  submit = () => {
+  submit = async () => {
+    if (this.state.loading) return;
     const f = this.state.form;
     const errors = {
       name: this.validate('name', f),
@@ -147,19 +160,34 @@ class Component extends DCLogic {
       this.setState({ errors });
       return;
     }
-    // valid — remember the details so the thank-you page can show them, then redirect
+
+    // normalise the phone to 10 digits + a display version for the thank-you page
     let d = f.phone.replace(/\D/g, '');
     if (d.length === 12 && d.slice(0, 2) === '91') d = d.slice(2);
     if (d.length === 11 && d[0] === '0') d = d.slice(1);
-    const phoneDisplay = d.length === 10 ? '+91 ' + d.slice(0, 5) + ' ' + d.slice(5) : f.phone.trim();
+    const phoneDisplay = '+91 ' + d.slice(0, 5) + ' ' + d.slice(5);
+
+    this.setState({ errors: { name: '', email: '', phone: '' }, payError: '', loading: true });
     try {
-      sessionStorage.setItem('hntx_reg', JSON.stringify({
-        name: f.name.trim(),
-        email: f.email.trim(),
-        phone: phoneDisplay,
-      }));
+      sessionStorage.setItem('hntx_reg', JSON.stringify({ name: f.name.trim(), email: f.email.trim(), phone: phoneDisplay }));
     } catch (e) {}
-    window.location.href = 'success.html';
+
+    const returnUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'success.html';
+    try {
+      const res = await fetch(this.WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: f.name.trim(), email: f.email.trim(), phone: d, seats: 1, return_url: returnUrl }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.payment_session_id) throw new Error(data.error || 'Could not start payment. Please try again.');
+      try { sessionStorage.setItem('hntx_webinar_order', data.order_id); } catch (e) {}
+      const cashfree = await Cashfree({ mode: this.CF_MODE });
+      cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+    } catch (err) {
+      try { sessionStorage.removeItem('hntx_webinar_order'); } catch (e) {}
+      this.setState({ payError: (err && err.message) || 'Payment failed. Please try again.', loading: false });
+    }
   };
 
   renderVals() {
@@ -173,6 +201,8 @@ class Component extends DCLogic {
       nameErr: errs.name, emailErr: errs.email, phoneErr: errs.phone,
       nameBorder: bd(errs.name), emailBorder: bd(errs.email), phoneBorder: bd(errs.phone),
       sourceColor: f.source ? '#000' : 'rgba(0,0,0,.4)',
+      payError: this.state.payError,
+      payLabel: this.state.loading ? 'Please wait…' : ('Complete Registration — ₹' + this.fmt(this.PRICE)),
       submit: this.submit,
       onName: (ev) => this.set('name', ev.target.value),
       onEmail: (ev) => this.set('email', ev.target.value),
@@ -181,6 +211,19 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+  // If the buyer returns here from the gateway with an order still pending
+  // (e.g. they tapped "Yes, Leave"), send them to the confirmation page.
+  window.addEventListener('pageshow', function () {
+    var oid;
+    try { oid = sessionStorage.getItem('hntx_webinar_order'); } catch (e) { oid = null; }
+    if (oid) {
+      try { sessionStorage.removeItem('hntx_webinar_order'); } catch (e) {}
+      var base = location.pathname.replace(/[^/]*$/, '');
+      location.replace(base + 'success.html?order_id=' + encodeURIComponent(oid));
+    }
+  });
 </script>
 </body>
 </html>
