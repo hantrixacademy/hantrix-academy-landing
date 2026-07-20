@@ -95,7 +95,7 @@
     <input class="search" id="search" placeholder="Search name, phone or email…" />
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Payment</th><th>Check-in</th><th>Registered</th><th>Actions</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
@@ -156,11 +156,14 @@
       var rows = document.getElementById('rows');
       document.getElementById('empty').style.display = list.length ? 'none' : 'block';
       rows.innerHTML = list.map(function (r) {
-        var pill = r.status !== 'PAID'
-          ? '<span class="pill unpaid">Not paid</span>'
-          : (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>');
+        var payPill = r.status === 'PAID'
+          ? '<span class="pill in">Paid</span>'
+          : '<span class="pill unpaid">Not paid</span>';
+        var checkPill = r.status === 'PAID'
+          ? (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>')
+          : '<span style="color:#bbb;">—</span>';
         var acts = '<button class="lnk edit" data-oid="'+esc(r.order_id)+'">Edit</button><button class="lnk del" data-oid="'+esc(r.order_id)+'">Delete</button>';
-        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+pill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+acts+'</td></tr>';
+        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+payPill+'</td><td>'+checkPill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+acts+'</td></tr>';
       }).join('');
       [].forEach.call(rows.querySelectorAll('.lnk.edit'), function(b){ b.onclick = function(){ openEdit(b.getAttribute('data-oid')); }; });
       [].forEach.call(rows.querySelectorAll('.lnk.del'), function(b){ b.onclick = function(){ doDelete(b.getAttribute('data-oid')); }; });
