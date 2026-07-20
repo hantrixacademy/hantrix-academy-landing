@@ -184,14 +184,23 @@
       });
     }
 
+    var paidKey = orderId ? 'hntx_paid_' + orderId : null;
     if (!orderId) {
       // reached without a payment order (registration-only mode) — show the thank-you
+      show('success');
+    } else if (paidKey && localStorage.getItem(paidKey)) {
+      // already confirmed on an earlier load — show instantly, don't re-verify
       show('success');
     } else {
       fetch(WORKER_URL + '?order_id=' + encodeURIComponent(orderId))
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          show(d && d.status === 'PAID' ? 'success' : 'failure');
+          if (d && d.status === 'PAID') {
+            try { localStorage.setItem(paidKey, '1'); } catch (e) {}   // remember, so reloads are instant
+            show('success');
+          } else {
+            show('failure');
+          }
         })
         .catch(function () {
           // if verification fails, don't block a paying customer — show success
