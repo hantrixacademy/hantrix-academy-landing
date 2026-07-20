@@ -93,6 +93,7 @@
 
     /* entered details on the success card */
     .detail { width: 100%; max-width: 420px; background: #fdf0e0; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+    #okRows { display: flex; flex-direction: column; gap: 10px; }
     .detail__row { display: flex; align-items: center; gap: 12px; font-size: 14px; }
     .detail__row .k { color: rgba(0,0,0,.5); min-width: 84px; }
     .detail__row .v { font-weight: 600; word-break: break-word; }
@@ -137,9 +138,11 @@
         <p class="card__sub">Your registration has been successfully confirmed. We're excited to have you at the Hantrix Mega Offline Event 2026.</p>
       </div>
       <div class="detail" id="okDetail">
-        <div class="detail__row"><span class="k">Email</span><span class="v" id="okEmail">—</span></div>
-        <div class="detail__row"><span class="k">WhatsApp</span><span class="v" id="okPhone">—</span></div>
-        <div class="detail__note">🎟️ Your entry pass (QR code) and all event details — venue, date &amp; timing — will be sent to your WhatsApp number and email above.</div>
+        <div id="okRows">
+          <div class="detail__row"><span class="k">Email</span><span class="v" id="okEmail">—</span></div>
+          <div class="detail__row"><span class="k">WhatsApp</span><span class="v" id="okPhone">—</span></div>
+        </div>
+        <div class="detail__note">🎟️ Your entry pass (QR code) and all event details — venue, date &amp; timing — will be shared on your registered WhatsApp number and email.</div>
       </div>
       <div class="card__actions">
         <a class="btn btn-primary" href="https://hantrixacademy.com/">Back to Home</a>
@@ -180,12 +183,12 @@
     (function fillDetails() {
       var d = null;
       try { d = JSON.parse(sessionStorage.getItem('hntx_reg') || 'null'); } catch (e) {}
-      var box = document.getElementById('okDetail');
+      var rows = document.getElementById('okRows');
       if (d && (d.email || d.phone)) {
         document.getElementById('okEmail').textContent = d.email || '—';
         document.getElementById('okPhone').textContent = d.phone || '—';
-      } else if (box) {
-        box.style.display = 'none';
+      } else if (rows) {
+        rows.style.display = 'none';   // no data (direct visit) — keep the note visible
       }
     })();
 
