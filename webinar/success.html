@@ -140,10 +140,6 @@
         <p class="card__sub">Your registration has been successfully confirmed. We're excited to have you at the Hantrix Mega Offline Event 2026.</p>
       </div>
       <div class="detail" id="okDetail">
-        <div id="okRows">
-          <div class="detail__row"><span class="k">Email</span><span class="v" id="okEmail">—</span></div>
-          <div class="detail__row"><span class="k">WhatsApp</span><span class="v" id="okPhone">—</span></div>
-        </div>
         <div class="detail__note">🎟️ Your entry pass (QR code) and all event details — venue, date &amp; timing — will be shared on your registered WhatsApp number and email.</div>
       </div>
       <div class="card__actions">
@@ -180,19 +176,6 @@
     var params = new URLSearchParams(window.location.search);
     var orderId = params.get('order_id');
     try { sessionStorage.removeItem('hntx_webinar_order'); } catch (e) {}
-
-    // show the email & phone the person entered on the form
-    (function fillDetails() {
-      var d = null;
-      try { d = JSON.parse(sessionStorage.getItem('hntx_reg') || 'null'); } catch (e) {}
-      var rows = document.getElementById('okRows');
-      if (d && (d.email || d.phone)) {
-        document.getElementById('okEmail').textContent = d.email || '—';
-        document.getElementById('okPhone').textContent = d.phone || '—';
-      } else if (rows) {
-        rows.style.display = 'none';   // no data (direct visit) — keep the note visible
-      }
-    })();
 
     function show(id) {
       ['verifying', 'success', 'failure'].forEach(function (k) {
