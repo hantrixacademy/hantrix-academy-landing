@@ -55,7 +55,7 @@
         <div style="display:flex; flex-direction:column; gap:8px; text-align:center;">
           <div style="font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#f7941d;">Registration</div>
           <h2 style="font-size:30px; font-weight:600;">Reserve Your Seat</h2>
-          <p style="font-size:14px; color:rgba(0,0,0,.5);">Hantrix Mega Offline Event 2026 · ₹999 per seat</p>
+          <p style="font-size:14px; color:rgba(0,0,0,.5);">Hantrix Mega Offline Event 2026 · ₹1 per seat</p>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:18px;">
@@ -119,7 +119,7 @@ class Component extends DCLogic {
     payError: '',
   };
 
-  PRICE = 999;
+  PRICE = 1;        // ⬅️ TEST amount. Change back to 999 for the real event.
   EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   // ⬇️ After deploying the Cloudflare Worker, paste its URL here.
