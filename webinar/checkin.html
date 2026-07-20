@@ -60,7 +60,7 @@
   <div class="gate" id="gate">
     <div class="box">
       <h2>Staff Check-in</h2>
-      <input id="pw" type="password" placeholder="Enter admin password" />
+      <input id="pw" type="password" placeholder="Enter staff password" />
       <div class="err" id="gateErr">Wrong password.</div>
       <button class="btn" id="gateBtn" style="width:100%;">Unlock</button>
     </div>
@@ -94,7 +94,7 @@
 
   <script>
     var WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
-    var token = localStorage.getItem('hntx_admin') || '';
+    var token = localStorage.getItem('hntx_staff') || '';
     var scanner = null, current = null, confirming = false, busy = false;
 
     function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
@@ -213,16 +213,16 @@
     }
 
     function showApp(){ document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; startScanner(); }
-    function gateFail(){ localStorage.removeItem('hntx_admin'); token=''; document.getElementById('gate').style.display='flex'; document.getElementById('app').style.display='none'; document.getElementById('gateErr').style.display='block'; }
+    function gateFail(){ localStorage.removeItem('hntx_staff'); token=''; document.getElementById('gate').style.display='flex'; document.getElementById('app').style.display='none'; document.getElementById('gateErr').style.display='block'; }
     function tryUnlock(){
-      fetch(WORKER_URL + '/admin/list', { headers:{ 'x-admin-token': token } })
+      fetch(WORKER_URL + '/staff/ping', { headers:{ 'x-admin-token': token } })
         .then(function(r){ if(r.status===401){ gateFail(); } else { showApp(); } })
         .catch(function(){ gateFail(); });
     }
 
     document.getElementById('gateBtn').addEventListener('click', function(){
       token = document.getElementById('pw').value.trim();
-      localStorage.setItem('hntx_admin', token);
+      localStorage.setItem('hntx_staff', token);
       document.getElementById('gateErr').style.display='none';
       tryUnlock();
     });
