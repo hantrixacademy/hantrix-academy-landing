@@ -50,8 +50,8 @@
     .modal .box { background:#fff; border-radius:16px; padding:22px; width:400px; max-width:100%; display:flex; flex-direction:column; gap:12px; }
     .modal h3 { font-size:17px; font-weight:700; }
     .modal label { font-size:12px; font-weight:600; color:var(--muted); margin-bottom:4px; display:block; }
-    .modal input { width:100%; padding:10px 12px; font-size:14px; border:1px solid var(--line); border-radius:10px; outline:none; font-family:inherit; }
-    .modal input:focus { border-color:var(--orange); }
+    .modal input, .modal select { width:100%; padding:10px 12px; font-size:14px; border:1px solid var(--line); border-radius:10px; outline:none; font-family:inherit; background:#fff; }
+    .modal input:focus, .modal select:focus { border-color:var(--orange); }
     .modal .foot { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:6px; }
     .modal .foot .right { display:flex; gap:8px; }
     /* gate */
@@ -104,16 +104,22 @@
 
   <div class="modal" id="addModal">
     <div class="box">
-      <h3>Add attendee (paid)</h3>
+      <h3>Add attendee</h3>
+      <div><label>Status</label>
+        <select id="aStatus">
+          <option value="PAID">Paid — send QR ticket by email</option>
+          <option value="PENDING">Not paid — just add to the list</option>
+        </select>
+      </div>
       <div><label>Full name</label><input id="aName" type="text" placeholder="Full name" /></div>
       <div><label>Phone</label><input id="aPhone" type="text" placeholder="10-digit number" /></div>
-      <div><label>Email</label><input id="aEmail" type="email" placeholder="email for the QR ticket" /></div>
+      <div><label>Email</label><input id="aEmail" type="email" placeholder="email (QR sent here if Paid)" /></div>
       <div><label>Amount (₹)</label><input id="aAmount" type="number" value="999" /></div>
       <div class="foot">
         <div></div>
         <div class="right">
           <button class="btn" id="aCancel">Cancel</button>
-          <button class="btn btn-primary" id="aSave">Add &amp; email QR</button>
+          <button class="btn btn-primary" id="aSave">Add attendee</button>
         </div>
       </div>
     </div>
@@ -201,6 +207,7 @@
 
     // add attendee (manual / paid via another channel)
     document.getElementById('addBtn').addEventListener('click', function(){
+      document.getElementById('aStatus').value='PAID';
       document.getElementById('aName').value=''; document.getElementById('aPhone').value='';
       document.getElementById('aEmail').value=''; document.getElementById('aAmount').value='999';
       document.getElementById('addModal').classList.add('show');
@@ -216,10 +223,11 @@
         phone: document.getElementById('aPhone').value.trim(),
         email: document.getElementById('aEmail').value.trim(),
         amount: parseInt(document.getElementById('aAmount').value, 10) || 999,
+        status: document.getElementById('aStatus').value,
       }).then(function(r){ return r.json(); }).then(function(){
         document.getElementById('addModal').classList.remove('show');
-        btn.disabled = false; btn.textContent = 'Add & email QR'; load();
-      }).catch(function(){ btn.disabled = false; btn.textContent = 'Add & email QR'; });
+        btn.disabled = false; btn.textContent = 'Add attendee'; load();
+      }).catch(function(){ btn.disabled = false; btn.textContent = 'Add attendee'; });
     });
 
     function load() {
