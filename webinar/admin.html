@@ -77,6 +77,7 @@
     <div class="top">
       <h1>Event Registrations</h1>
       <div class="right">
+        <button class="btn btn-primary" id="addBtn">+ Add attendee</button>
         <button class="btn" id="refresh">Refresh</button>
         <button class="btn" id="csv">Export CSV</button>
         <button class="btn" id="logout">Log out</button>
@@ -98,6 +99,23 @@
         <tbody id="rows"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
+    </div>
+  </div>
+
+  <div class="modal" id="addModal">
+    <div class="box">
+      <h3>Add attendee (paid)</h3>
+      <div><label>Full name</label><input id="aName" type="text" placeholder="Full name" /></div>
+      <div><label>Phone</label><input id="aPhone" type="text" placeholder="10-digit number" /></div>
+      <div><label>Email</label><input id="aEmail" type="email" placeholder="email for the QR ticket" /></div>
+      <div><label>Amount (₹)</label><input id="aAmount" type="number" value="999" /></div>
+      <div class="foot">
+        <div></div>
+        <div class="right">
+          <button class="btn" id="aCancel">Cancel</button>
+          <button class="btn btn-primary" id="aSave">Add &amp; email QR</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -180,6 +198,29 @@
       if (!confirm('Delete registration for "' + (r ? r.name : oid) + '"? This cannot be undone.')) return;
       apiPost('/admin/delete', { order_id: oid }).then(function(){ load(); });
     }
+
+    // add attendee (manual / paid via another channel)
+    document.getElementById('addBtn').addEventListener('click', function(){
+      document.getElementById('aName').value=''; document.getElementById('aPhone').value='';
+      document.getElementById('aEmail').value=''; document.getElementById('aAmount').value='999';
+      document.getElementById('addModal').classList.add('show');
+    });
+    document.getElementById('aCancel').addEventListener('click', function(){ document.getElementById('addModal').classList.remove('show'); });
+    document.getElementById('addModal').addEventListener('click', function(e){ if(e.target.id==='addModal') document.getElementById('addModal').classList.remove('show'); });
+    document.getElementById('aSave').addEventListener('click', function(){
+      var name = document.getElementById('aName').value.trim();
+      if (name.length < 2) { alert('Please enter a name.'); return; }
+      var btn = document.getElementById('aSave'); btn.disabled = true; btn.textContent = 'Adding…';
+      apiPost('/admin/add', {
+        name: name,
+        phone: document.getElementById('aPhone').value.trim(),
+        email: document.getElementById('aEmail').value.trim(),
+        amount: parseInt(document.getElementById('aAmount').value, 10) || 999,
+      }).then(function(r){ return r.json(); }).then(function(){
+        document.getElementById('addModal').classList.remove('show');
+        btn.disabled = false; btn.textContent = 'Add & email QR'; load();
+      }).catch(function(){ btn.disabled = false; btn.textContent = 'Add & email QR'; });
+    });
 
     function load() {
       api('/admin/list').then(function (r) {
