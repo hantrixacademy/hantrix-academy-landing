@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check-in — Hantrix Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    :root { --orange:#f7941d; --bg:#f5f5f5; --text:#111; --muted:rgba(0,0,0,.55); --line:rgba(0,0,0,.12); --green:#1a9d54; --red:#e11d48; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Plus Jakarta Sans",sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    .wrap { max-width:520px; margin:0 auto; padding:20px 16px 60px; }
+    h1 { font-size:20px; font-weight:700; text-align:center; margin-bottom:4px; }
+    .sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px; }
+    #reader { width:100%; border-radius:16px; overflow:hidden; border:1px solid var(--line); background:#000; }
+    .result { margin-top:16px; border-radius:16px; padding:22px 18px; text-align:center; display:none; }
+    .result.show { display:block; }
+    .result.ok { background:#e6f6ee; border:1px solid #b9e6cd; }
+    .result.already { background:#fff6e6; border:1px solid #f3dca6; }
+    .result.bad { background:#fdecec; border:1px solid #f5c2c2; }
+    .result .ico { font-size:40px; }
+    .result .who { font-size:24px; font-weight:800; margin-top:6px; }
+    .result .msg { font-size:14px; color:var(--muted); margin-top:6px; }
+    .result.ok .msg { color:var(--green); font-weight:600; }
+    .result.bad .msg { color:var(--red); font-weight:600; }
+    .divider { text-align:center; color:var(--muted); font-size:12px; margin:20px 0 12px; text-transform:uppercase; letter-spacing:1px; }
+    .search { display:flex; gap:8px; }
+    .search input { flex:1; padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; font-family:inherit; }
+    .search input:focus { border-color:var(--orange); }
+    .search button, .btn { border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:14px; border-radius:12px; padding:12px 16px; background:var(--orange); color:#fff; }
+    .rows { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+    .row { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .row .info { min-width:0; }
+    .row .nm { font-weight:700; font-size:15px; }
+    .row .ph { font-size:12.5px; color:var(--muted); }
+    .row .act { flex-shrink:0; }
+    .row .act.in { color:var(--green); font-weight:700; font-size:13px; }
+    .mini { padding:8px 12px; font-size:13px; }
+    .toggle { text-align:center; margin-top:14px; }
+    .toggle button { background:none; border:none; color:var(--orange); font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; }
+    /* gate */
+    .gate { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
+    .gate .box { background:#fff; border:1px solid var(--line); border-radius:18px; padding:28px; width:360px; max-width:100%; display:flex; flex-direction:column; gap:14px; text-align:center; }
+    .gate h2 { font-size:20px; font-weight:700; }
+    .gate input { padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; font-family:inherit; }
+    .gate .err { color:var(--red); font-size:13px; display:none; }
+  </style>
+</head>
+<body>
+  <div class="gate" id="gate">
+    <div class="box">
+      <h2>Staff Check-in</h2>
+      <input id="pw" type="password" placeholder="Enter admin password" />
+      <div class="err" id="gateErr">Wrong password.</div>
+      <button class="btn" id="gateBtn" style="width:100%;">Unlock</button>
+    </div>
+  </div>
+
+  <div class="wrap" id="app" style="display:none;">
+    <h1>Event Check-in</h1>
+    <div class="sub">Scan the attendee's QR pass, or search by name / phone</div>
+
+    <div id="reader"></div>
+    <div class="result" id="result">
+      <div class="ico" id="rIco"></div>
+      <div class="who" id="rWho"></div>
+      <div class="msg" id="rMsg"></div>
+    </div>
+    <div class="toggle"><button id="rescan">↻ Scan next</button></div>
+
+    <div class="divider">— or find manually —</div>
+    <div class="search">
+      <input id="q" placeholder="Name or phone number" />
+      <button id="find">Find</button>
+    </div>
+    <div class="rows" id="rows"></div>
+  </div>
+
+  <script>
+    var WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
+    var token = localStorage.getItem('hntx_admin') || '';
+    var scanner = null, busy = false;
+
+    function headers(){ return { 'Content-Type':'application/json', 'x-admin-token': token }; }
+    function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+    function showResult(kind, who, msg) {
+      var el = document.getElementById('result');
+      el.className = 'result show ' + kind;
+      document.getElementById('rIco').textContent = kind==='ok'?'✅':(kind==='already'?'⚠️':'❌');
+      document.getElementById('rWho').textContent = who || '';
+      document.getElementById('rMsg').textContent = msg || '';
+      if (navigator.vibrate) navigator.vibrate(kind==='ok'?120:[60,40,60]);
+    }
+
+    function doCheckin(payload, cb) {
+      if (busy) return; busy = true;
+      fetch(WORKER_URL + '/checkin', { method:'POST', headers:headers(), body:JSON.stringify(payload) })
+        .then(function(r){ if(r.status===401){ gateFail(); throw 0; } return r.json(); })
+        .then(function(d){
+          busy = false;
+          if (d.result==='ok') showResult('ok', d.name, 'Verified · ₹ paid · checked in');
+          else if (d.result==='already') showResult('already', d.name, 'Already checked in at ' + fmt(d.at));
+          else showResult('bad', 'Not valid', d.message || 'Ticket not recognised');
+          if (cb) cb(d);
+        }).catch(function(){ busy=false; });
+    }
+    function fmt(s){ if(!s) return ''; var d=new Date(s); return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+
+    function onScan(text) {
+      if (busy) return;
+      doCheckin({ code: text });
+    }
+
+    function startScanner() {
+      if (scanner) return;
+      scanner = new Html5Qrcode('reader');
+      scanner.start({ facingMode: 'environment' }, { fps:10, qrbox:{width:220,height:220} }, onScan, function(){})
+        .catch(function(){ document.getElementById('reader').innerHTML = '<div style="color:#fff;padding:24px;text-align:center;font-size:13px;">Camera unavailable — use manual search below.</div>'; });
+    }
+
+    // manual search
+    function findPeople() {
+      var q = document.getElementById('q').value.trim();
+      if (!q) return;
+      fetch(WORKER_URL + '/admin/search?q=' + encodeURIComponent(q), { headers:{ 'x-admin-token': token } })
+        .then(function(r){ if(r.status===401){ gateFail(); throw 0; } return r.json(); })
+        .then(function(d){
+          var rows = document.getElementById('rows');
+          var list = (d.registrations||[]).filter(function(r){ return r.status==='PAID'; });
+          if (!list.length) { rows.innerHTML = '<div style="text-align:center;color:#888;font-size:13px;padding:10px;">No paid registration found.</div>'; return; }
+          rows.innerHTML = list.map(function(r){
+            var right = r.checked_in
+              ? '<span class="act in">✓ In</span>'
+              : '<button class="btn mini" data-oid="'+esc(r.order_id)+'">Check in</button>';
+            return '<div class="row"><div class="info"><div class="nm">'+esc(r.name)+'</div><div class="ph">'+esc(r.phone)+'</div></div><div class="act">'+right+'</div></div>';
+          }).join('');
+          [].forEach.call(rows.querySelectorAll('button[data-oid]'), function(b){
+            b.addEventListener('click', function(){
+              doCheckin({ order_id: b.getAttribute('data-oid') }, function(){ findPeople(); });
+            });
+          });
+        }).catch(function(){});
+    }
+
+    function showApp(){ document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; startScanner(); }
+    function gateFail(){ localStorage.removeItem('hntx_admin'); token=''; document.getElementById('gate').style.display='flex'; document.getElementById('app').style.display='none'; document.getElementById('gateErr').style.display='block'; }
+
+    function tryUnlock(){
+      // validate the password against a lightweight admin call
+      fetch(WORKER_URL + '/admin/list', { headers:{ 'x-admin-token': token } })
+        .then(function(r){ if(r.status===401){ gateFail(); } else { showApp(); } })
+        .catch(function(){ gateFail(); });
+    }
+
+    document.getElementById('gateBtn').addEventListener('click', function(){
+      token = document.getElementById('pw').value.trim();
+      localStorage.setItem('hntx_admin', token);
+      document.getElementById('gateErr').style.display='none';
+      tryUnlock();
+    });
+    document.getElementById('pw').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gateBtn').click(); });
+    document.getElementById('rescan').addEventListener('click', function(){ document.getElementById('result').className='result'; });
+    document.getElementById('find').addEventListener('click', findPeople);
+    document.getElementById('q').addEventListener('keydown', function(e){ if(e.key==='Enter') findPeople(); });
+
+    if (token) tryUnlock();
+  </script>
+</body>
+</html>

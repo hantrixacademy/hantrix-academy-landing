@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <style>
     :root {
       --orange: #f7941d;
@@ -100,6 +101,12 @@
     .detail__row .v { font-weight: 600; word-break: break-word; }
     .detail__note { font-size: 12.5px; color: rgba(0,0,0,.5); line-height: 1.5; }
 
+    /* QR entry pass */
+    .ticket { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .ticket__qr { padding: 14px; background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 16px; line-height: 0; }
+    .ticket__qr img { width: 168px; height: 168px; display: block; image-rendering: pixelated; }
+    .ticket__label { font-size: 12.5px; font-weight: 600; color: rgba(0,0,0,.6); text-align: center; }
+
     .hidden { display: none !important; }
 
     @media (max-width: 640px) {
@@ -142,6 +149,10 @@
         <div class="detail__row"><span class="k">Email</span><span class="v" id="okEmail">—</span></div>
         <div class="detail__row"><span class="k">WhatsApp</span><span class="v" id="okPhone">—</span></div>
         <div class="detail__note">📩 The venue, date, timing &amp; all event details will be shared on the WhatsApp number and email above.</div>
+      </div>
+      <div class="ticket hidden" id="okTicket">
+        <div class="ticket__qr" id="qrBox"></div>
+        <div class="ticket__label">🎟️ Your entry pass — show this QR code at the venue</div>
       </div>
       <div class="card__actions">
         <a class="btn btn-primary" href="https://hantrixacademy.com/">Back to Home</a>
@@ -197,6 +208,17 @@
       });
     }
 
+    function renderTicket(code) {
+      try {
+        if (typeof qrcode !== 'function' || !code) return;
+        var qr = qrcode(0, 'M');
+        qr.addData(code);
+        qr.make();
+        document.getElementById('qrBox').innerHTML = qr.createImgTag(5, 8);
+        document.getElementById('okTicket').classList.remove('hidden');
+      } catch (e) {}
+    }
+
     if (!orderId) {
       // reached without a payment order (registration-only mode) — show the thank-you
       show('success');
@@ -204,7 +226,12 @@
       fetch(WORKER_URL + '?order_id=' + encodeURIComponent(orderId))
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          show(d && d.status === 'PAID' ? 'success' : 'failure');
+          if (d && d.status === 'PAID') {
+            if (d.ticket) renderTicket(orderId + '.' + d.ticket);
+            show('success');
+          } else {
+            show('failure');
+          }
         })
         .catch(function () {
           // if verification fails, don't block a paying customer — show success

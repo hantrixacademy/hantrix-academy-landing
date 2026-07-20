@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrations — Hantrix Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --orange:#f7941d; --bg:#f5f5f5; --text:#111; --muted:rgba(0,0,0,.55); --line:rgba(0,0,0,.1); --green:#1a9d54; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Plus Jakarta Sans",sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    .wrap { max-width:1000px; margin:0 auto; padding:24px 18px 60px; }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .top h1 { font-size:22px; font-weight:700; }
+    .top .right { display:flex; gap:8px; }
+    .btn { border:none; cursor:pointer; font-family:inherit; font-weight:600; font-size:14px; border-radius:10px; padding:10px 16px; background:#fff; color:#111; border:1px solid var(--line); }
+    .btn-primary { background:var(--orange); color:#fff; border-color:transparent; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
+    .stat { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+    .stat .n { font-size:28px; font-weight:800; }
+    .stat .l { font-size:12.5px; color:var(--muted); margin-top:2px; text-transform:uppercase; letter-spacing:.5px; }
+    .stat.green .n { color:var(--green); }
+    .stat.orange .n { color:var(--orange); }
+    .search { width:100%; padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; margin-bottom:14px; background:#fff; font-family:inherit; }
+    .search:focus { border-color:var(--orange); }
+    .tablewrap { background:#fff; border:1px solid var(--line); border-radius:14px; overflow:auto; }
+    table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px; }
+    th, td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); white-space:nowrap; }
+    th { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); background:#fafafa; position:sticky; top:0; }
+    tr:last-child td { border-bottom:none; }
+    td.name { font-weight:600; white-space:normal; }
+    .pill { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; }
+    .pill.in { background:#e6f6ee; color:var(--green); }
+    .pill.no { background:#f0f0f0; color:#888; }
+    .empty { padding:40px; text-align:center; color:var(--muted); }
+    /* gate */
+    .gate { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:20px; z-index:10; }
+    .gate .box { background:#fff; border:1px solid var(--line); border-radius:18px; padding:28px; width:360px; max-width:100%; display:flex; flex-direction:column; gap:14px; text-align:center; }
+    .gate h2 { font-size:20px; font-weight:700; }
+    .gate input { padding:12px 14px; font-size:15px; border:1px solid var(--line); border-radius:12px; outline:none; font-family:inherit; }
+    .gate .err { color:#e11d48; font-size:13px; display:none; }
+    @media (max-width:560px){ .cards{ grid-template-columns:repeat(3,1fr);} .stat .n{font-size:20px;} .stat .l{font-size:10px;} }
+  </style>
+</head>
+<body>
+  <div class="gate" id="gate">
+    <div class="box">
+      <h2>Admin Access</h2>
+      <input id="pw" type="password" placeholder="Enter admin password" />
+      <div class="err" id="gateErr">Wrong password.</div>
+      <button class="btn btn-primary" id="gateBtn">Unlock</button>
+    </div>
+  </div>
+
+  <div class="wrap" id="app" style="display:none;">
+    <div class="top">
+      <h1>Event Registrations</h1>
+      <div class="right">
+        <button class="btn" id="refresh">Refresh</button>
+        <button class="btn" id="csv">Export CSV</button>
+        <button class="btn" id="logout">Log out</button>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="stat"><div class="n" id="cTotal">—</div><div class="l">Registered</div></div>
+      <div class="stat green"><div class="n" id="cIn">—</div><div class="l">Checked in</div></div>
+      <div class="stat orange"><div class="n" id="cRev">—</div><div class="l">Revenue ₹</div></div>
+    </div>
+    <input class="search" id="search" placeholder="Search name, phone or email…" />
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Status</th><th>Registered</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
+    </div>
+  </div>
+
+  <script>
+    var WORKER_URL = 'https://cashfree-webinar.hantrixacademy.workers.dev';
+    var token = localStorage.getItem('hntx_admin') || '';
+    var ALL = [];
+
+    function api(path) {
+      return fetch(WORKER_URL + path, { headers: { 'x-admin-token': token } });
+    }
+    function fmtDate(s) { if(!s) return '—'; var d=new Date(s); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+    function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+    function render(list) {
+      var rows = document.getElementById('rows');
+      document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+      rows.innerHTML = list.map(function (r) {
+        var pill = r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>';
+        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+pill+'</td><td>'+fmtDate(r.created_at)+'</td></tr>';
+      }).join('');
+    }
+
+    function load() {
+      api('/admin/list').then(function (r) {
+        if (r.status === 401) return gateFail();
+        return r.json();
+      }).then(function (d) {
+        if (!d) return;
+        ALL = d.registrations || [];
+        document.getElementById('cTotal').textContent = d.total || 0;
+        document.getElementById('cIn').textContent = d.checkedIn || 0;
+        var rev = ALL.reduce(function(s,r){ return s + (r.status==='PAID' ? (r.amount||0) : 0); }, 0);
+        document.getElementById('cRev').textContent = rev.toLocaleString('en-IN');
+        applySearch();
+        showApp();
+      }).catch(function(){ gateFail(); });
+    }
+
+    function applySearch() {
+      var q = document.getElementById('search').value.trim().toLowerCase();
+      if (!q) return render(ALL);
+      render(ALL.filter(function(r){
+        return (r.name||'').toLowerCase().indexOf(q)>=0 || (r.phone||'').indexOf(q)>=0 || (r.email||'').toLowerCase().indexOf(q)>=0;
+      }));
+    }
+
+    function exportCSV() {
+      var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered'];
+      var lines = [head.join(',')].concat(ALL.map(function(r){
+        return [r.name,r.phone,r.email,r.amount,r.status,r.checked_in?'Yes':'No',r.checked_in_at||'',r.created_at].map(function(v){
+          v = (v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"';
+        }).join(',');
+      }));
+      var blob = new Blob([lines.join('\n')], {type:'text/csv'});
+      var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hantrix-registrations.csv'; a.click();
+    }
+
+    function showApp(){ document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block'; }
+    function gateFail(){ localStorage.removeItem('hntx_admin'); token=''; document.getElementById('gate').style.display='flex'; document.getElementById('app').style.display='none'; document.getElementById('gateErr').style.display='block'; }
+
+    document.getElementById('gateBtn').addEventListener('click', function(){
+      token = document.getElementById('pw').value.trim();
+      localStorage.setItem('hntx_admin', token);
+      document.getElementById('gateErr').style.display='none';
+      load();
+    });
+    document.getElementById('pw').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('gateBtn').click(); });
+    document.getElementById('search').addEventListener('input', applySearch);
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('csv').addEventListener('click', exportCSV);
+    document.getElementById('logout').addEventListener('click', gateFail);
+
+    if (token) load(); // try stored password
+  </script>
+</body>
+</html>
