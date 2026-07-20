@@ -33,6 +33,12 @@
     .pill { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; }
     .pill.in { background:#e6f6ee; color:var(--green); }
     .pill.no { background:#f0f0f0; color:#888; }
+    .pill.unpaid { background:#fdecec; color:#e11d48; }
+    .tabs { display:flex; gap:8px; margin-bottom:12px; }
+    .tab { border:1px solid var(--line); background:#fff; color:var(--muted); font-family:inherit; font-weight:600; font-size:13.5px; padding:9px 14px; border-radius:10px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; }
+    .tab.active { background:#111; color:#fff; border-color:#111; }
+    .tab .badge { background:rgba(0,0,0,.12); border-radius:20px; padding:1px 8px; font-size:12px; }
+    .tab.active .badge { background:rgba(255,255,255,.25); }
     .empty { padding:40px; text-align:center; color:var(--muted); }
     .lnk { border:none; background:none; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; padding:4px 6px; border-radius:6px; }
     .lnk.edit { color:var(--orange); }
@@ -77,9 +83,13 @@
       </div>
     </div>
     <div class="cards">
-      <div class="stat"><div class="n" id="cTotal">—</div><div class="l">Registered</div></div>
+      <div class="stat"><div class="n" id="cTotal">—</div><div class="l">Paid</div></div>
       <div class="stat green"><div class="n" id="cIn">—</div><div class="l">Checked in</div></div>
       <div class="stat orange"><div class="n" id="cRev">—</div><div class="l">Revenue ₹</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="paid">Paid <span class="badge" id="tPaid">0</span></button>
+      <button class="tab" data-tab="pending">Not paid <span class="badge" id="tPending">0</span></button>
     </div>
     <input class="search" id="search" placeholder="Search name, phone or email…" />
     <div class="tablewrap">
@@ -122,7 +132,9 @@
       var rows = document.getElementById('rows');
       document.getElementById('empty').style.display = list.length ? 'none' : 'block';
       rows.innerHTML = list.map(function (r) {
-        var pill = r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>';
+        var pill = r.status !== 'PAID'
+          ? '<span class="pill unpaid">Not paid</span>'
+          : (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>');
         var acts = '<button class="lnk edit" data-oid="'+esc(r.order_id)+'">Edit</button><button class="lnk del" data-oid="'+esc(r.order_id)+'">Delete</button>';
         return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+pill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+acts+'</td></tr>';
       }).join('');
@@ -176,22 +188,31 @@
       }).then(function (d) {
         if (!d) return;
         ALL = d.registrations || [];
-        document.getElementById('cTotal').textContent = d.total || 0;
+        document.getElementById('cTotal').textContent = d.paid || 0;
         document.getElementById('cIn').textContent = d.checkedIn || 0;
-        var rev = ALL.reduce(function(s,r){ return s + (r.status==='PAID' ? (r.amount||0) : 0); }, 0);
-        document.getElementById('cRev').textContent = rev.toLocaleString('en-IN');
+        document.getElementById('cRev').textContent = (d.revenue || 0).toLocaleString('en-IN');
+        document.getElementById('tPaid').textContent = d.paid || 0;
+        document.getElementById('tPending').textContent = d.pending || 0;
         applySearch();
         showApp();
       }).catch(function(){ gateFail(); });
     }
 
+    var activeTab = 'paid';
     function applySearch() {
       var q = document.getElementById('search').value.trim().toLowerCase();
-      if (!q) return render(ALL);
-      render(ALL.filter(function(r){
+      var list = ALL.filter(function(r){ return activeTab === 'paid' ? r.status === 'PAID' : r.status !== 'PAID'; });
+      if (q) list = list.filter(function(r){
         return (r.name||'').toLowerCase().indexOf(q)>=0 || (r.phone||'').indexOf(q)>=0 || (r.email||'').toLowerCase().indexOf(q)>=0;
-      }));
+      });
+      render(list);
     }
+    [].forEach.call(document.querySelectorAll('.tab'), function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+        t.classList.add('active'); activeTab = t.getAttribute('data-tab'); applySearch();
+      });
+    });
 
     function exportCSV() {
       var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered'];
