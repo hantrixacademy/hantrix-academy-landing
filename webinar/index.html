@@ -202,7 +202,7 @@ class Component extends DCLogic {
       nameBorder: bd(errs.name), emailBorder: bd(errs.email), phoneBorder: bd(errs.phone),
       sourceColor: f.source ? '#000' : 'rgba(0,0,0,.4)',
       payError: this.state.payError,
-      payLabel: this.state.loading ? 'Please wait…' : ('Complete Registration — ₹' + this.fmt(this.PRICE)),
+      payLabel: this.state.loading ? 'Please wait…' : ('Complete Registration ₹' + this.fmt(this.PRICE)),
       submit: this.submit,
       onName: (ev) => this.set('name', ev.target.value),
       onEmail: (ev) => this.set('email', ev.target.value),
