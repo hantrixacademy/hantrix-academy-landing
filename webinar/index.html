@@ -7,6 +7,14 @@
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="./support.js"></script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1876422673763677');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1876422673763677&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 <x-dc>
@@ -163,6 +171,7 @@ class Component extends DCLogic {
       this.setState({ errors });
       return;
     }
+    if (window.fbq) fbq('track', 'Lead');   // name, email & phone submitted
 
     // normalise the phone to 10 digits + a display version for the thank-you page
     let d = f.phone.replace(/\D/g, '');
@@ -185,6 +194,7 @@ class Component extends DCLogic {
       const data = await res.json();
       if (!res.ok || !data.payment_session_id) throw new Error(data.error || 'Could not start payment. Please try again.');
       try { sessionStorage.setItem('hntx_webinar_order', data.order_id); } catch (e) {}
+      if (window.fbq) fbq('track', 'InitiateCheckout', { value: this.PRICE, currency: 'INR' });   // Cashfree page opening
       const cashfree = await Cashfree({ mode: this.CF_MODE });
       cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
     } catch (err) {
