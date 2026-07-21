@@ -44,6 +44,8 @@
     .lnk.edit { color:var(--orange); }
     .lnk.del { color:#e11d48; }
     .lnk:hover { background:rgba(0,0,0,.05); }
+    .note-inp { width:150px; padding:6px 9px; font-size:12.5px; border:1px solid var(--line); border-radius:8px; outline:none; font-family:inherit; }
+    .note-inp:focus { border-color:var(--orange); }
     /* modal */
     .modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
     .modal.show { display:flex; }
@@ -95,7 +97,7 @@
     <input class="search" id="search" placeholder="Search name, phone or email…" />
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Payment</th><th>Check-in</th><th>Registered</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Payment</th><th>Check-in</th><th>Registered</th><th>Notes</th><th>Actions</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
@@ -162,11 +164,20 @@
         var checkPill = r.status === 'PAID'
           ? (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>')
           : '<span style="color:#bbb;">—</span>';
+        var note = '<input class="note-inp" data-oid="'+esc(r.order_id)+'" value="'+esc(r.notes||'')+'" placeholder="Add note…">';
         var acts = '<button class="lnk edit" data-oid="'+esc(r.order_id)+'">Edit</button><button class="lnk del" data-oid="'+esc(r.order_id)+'">Delete</button>';
-        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+payPill+'</td><td>'+checkPill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+acts+'</td></tr>';
+        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+payPill+'</td><td>'+checkPill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+note+'</td><td>'+acts+'</td></tr>';
       }).join('');
       [].forEach.call(rows.querySelectorAll('.lnk.edit'), function(b){ b.onclick = function(){ openEdit(b.getAttribute('data-oid')); }; });
       [].forEach.call(rows.querySelectorAll('.lnk.del'), function(b){ b.onclick = function(){ doDelete(b.getAttribute('data-oid')); }; });
+      [].forEach.call(rows.querySelectorAll('.note-inp'), function(inp){
+        inp.addEventListener('change', function(){
+          var oid = inp.getAttribute('data-oid');
+          var rec = ALL.find(function(x){ return x.order_id === oid; });
+          if (rec) rec.notes = inp.value;                       // keep client state in sync
+          apiPost('/admin/note', { order_id: oid, notes: inp.value });
+        });
+      });
     }
 
     function apiPost(path, body) {
@@ -267,9 +278,9 @@
     });
 
     function exportCSV() {
-      var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered'];
+      var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered','Notes'];
       var lines = [head.join(',')].concat(ALL.map(function(r){
-        return [r.name,r.phone,r.email,r.amount,r.status,r.checked_in?'Yes':'No',r.checked_in_at||'',r.created_at].map(function(v){
+        return [r.name,r.phone,r.email,r.amount,r.status,r.checked_in?'Yes':'No',r.checked_in_at||'',r.created_at,r.notes||''].map(function(v){
           v = (v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"';
         }).join(',');
       }));
