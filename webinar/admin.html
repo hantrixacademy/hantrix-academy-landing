@@ -44,8 +44,14 @@
     .lnk.edit { color:var(--orange); }
     .lnk.del { color:#e11d48; }
     .lnk:hover { background:rgba(0,0,0,.05); }
-    .note-inp { width:150px; padding:6px 9px; font-size:12.5px; border:1px solid var(--line); border-radius:8px; outline:none; font-family:inherit; }
-    .note-inp:focus { border-color:var(--orange); }
+    .rowc { cursor:pointer; }
+    .rowc:hover td { background:#faf7f2; }
+    .drow { display:flex; justify-content:space-between; gap:14px; font-size:14px; padding:9px 0; border-bottom:1px solid var(--line); }
+    .drow .dk { color:var(--muted); flex-shrink:0; }
+    .drow .dv { font-weight:600; text-align:right; word-break:break-word; }
+    .modal textarea { width:100%; padding:10px 12px; font-size:14px; border:1px solid var(--line); border-radius:10px; outline:none; font-family:inherit; resize:vertical; }
+    .modal textarea:focus { border-color:var(--orange); }
+    .save-hint { font-size:11.5px; color:var(--muted); }
     /* modal */
     .modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; padding:20px; z-index:20; }
     .modal.show { display:flex; }
@@ -97,10 +103,33 @@
     <input class="search" id="search" placeholder="Search name, phone or email…" />
     <div class="tablewrap">
       <table>
-        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Payment</th><th>Check-in</th><th>Registered</th><th>Notes</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Amount</th><th>Payment</th><th>Check-in</th><th>Registered</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <div class="empty" id="empty" style="display:none;">No registrations yet.</div>
+    </div>
+  </div>
+
+  <div class="modal" id="detailModal">
+    <div class="box">
+      <h3 id="dName">—</h3>
+      <div id="dPills" style="display:flex; gap:8px; margin:-4px 0 6px;"></div>
+      <div class="drow"><span class="dk">Phone</span><span class="dv" id="dPhone"></span></div>
+      <div class="drow"><span class="dk">Email</span><span class="dv" id="dEmail"></span></div>
+      <div class="drow"><span class="dk">Amount</span><span class="dv" id="dAmount"></span></div>
+      <div class="drow"><span class="dk">Registered</span><span class="dv" id="dDate"></span></div>
+      <div class="drow"><span class="dk">Booking ID</span><span class="dv" id="dOid" style="font-size:11px; color:#999; font-weight:400;"></span></div>
+      <div style="margin-top:6px;">
+        <label>Notes <span class="save-hint">(saves automatically)</span></label>
+        <textarea id="dNotes" rows="3" placeholder="Add a note — e.g. called, will pay tomorrow…"></textarea>
+      </div>
+      <div class="foot">
+        <button class="lnk del" id="dDelete" style="color:#e11d48; font-size:13.5px;">Delete</button>
+        <div class="right">
+          <button class="btn" id="dEdit">Edit details</button>
+          <button class="btn btn-primary" id="dClose">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -164,20 +193,10 @@
         var checkPill = r.status === 'PAID'
           ? (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>')
           : '<span style="color:#bbb;">—</span>';
-        var note = '<input class="note-inp" data-oid="'+esc(r.order_id)+'" value="'+esc(r.notes||'')+'" placeholder="Add note…">';
-        var acts = '<button class="lnk edit" data-oid="'+esc(r.order_id)+'">Edit</button><button class="lnk del" data-oid="'+esc(r.order_id)+'">Delete</button>';
-        return '<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+payPill+'</td><td>'+checkPill+'</td><td>'+fmtDate(r.created_at)+'</td><td>'+note+'</td><td>'+acts+'</td></tr>';
+        var noteDot = (r.notes && r.notes.trim()) ? ' <span title="Has a note" style="color:var(--orange);">•</span>' : '';
+        return '<tr class="rowc" data-oid="'+esc(r.order_id)+'"><td class="name">'+esc(r.name)+noteDot+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.email)+'</td><td>₹'+(r.amount||0)+'</td><td>'+payPill+'</td><td>'+checkPill+'</td><td>'+fmtDate(r.created_at)+'</td></tr>';
       }).join('');
-      [].forEach.call(rows.querySelectorAll('.lnk.edit'), function(b){ b.onclick = function(){ openEdit(b.getAttribute('data-oid')); }; });
-      [].forEach.call(rows.querySelectorAll('.lnk.del'), function(b){ b.onclick = function(){ doDelete(b.getAttribute('data-oid')); }; });
-      [].forEach.call(rows.querySelectorAll('.note-inp'), function(inp){
-        inp.addEventListener('change', function(){
-          var oid = inp.getAttribute('data-oid');
-          var rec = ALL.find(function(x){ return x.order_id === oid; });
-          if (rec) rec.notes = inp.value;                       // keep client state in sync
-          apiPost('/admin/note', { order_id: oid, notes: inp.value });
-        });
-      });
+      [].forEach.call(rows.querySelectorAll('.rowc'), function(tr){ tr.addEventListener('click', function(){ openDetails(tr.getAttribute('data-oid')); }); });
     }
 
     function apiPost(path, body) {
@@ -218,6 +237,36 @@
       if (!confirm('Delete registration for "' + (r ? r.name : oid) + '"? This cannot be undone.')) return;
       apiPost('/admin/delete', { order_id: oid }).then(function(){ load(); });
     }
+
+    // details popup (click a row)
+    var detailId = null;
+    function openDetails(oid) {
+      var r = ALL.find(function(x){ return x.order_id === oid; });
+      if (!r) return;
+      detailId = oid;
+      document.getElementById('dName').textContent = r.name || '(no name)';
+      var payPill = r.status === 'PAID' ? '<span class="pill in">Paid</span>' : '<span class="pill unpaid">Not paid</span>';
+      var checkPill = r.status === 'PAID' ? (r.checked_in ? '<span class="pill in">✓ Arrived</span>' : '<span class="pill no">Not yet</span>') : '';
+      document.getElementById('dPills').innerHTML = payPill + checkPill;
+      document.getElementById('dPhone').textContent = r.phone || '—';
+      document.getElementById('dEmail').textContent = r.email || '—';
+      document.getElementById('dAmount').textContent = '₹' + (r.amount || 0);
+      document.getElementById('dDate').textContent = fmtDate(r.created_at);
+      document.getElementById('dOid').textContent = r.order_id;
+      document.getElementById('dNotes').value = r.notes || '';
+      document.getElementById('detailModal').classList.add('show');
+    }
+    function closeDetails(){ document.getElementById('detailModal').classList.remove('show'); detailId = null; }
+    document.getElementById('dClose').addEventListener('click', closeDetails);
+    document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target.id==='detailModal') closeDetails(); });
+    document.getElementById('dNotes').addEventListener('change', function(){
+      if (!detailId) return;
+      var rec = ALL.find(function(x){ return x.order_id === detailId; });
+      if (rec) rec.notes = document.getElementById('dNotes').value;   // keep client state + row dot in sync
+      apiPost('/admin/note', { order_id: detailId, notes: document.getElementById('dNotes').value });
+    });
+    document.getElementById('dEdit').addEventListener('click', function(){ var oid = detailId; closeDetails(); openEdit(oid); });
+    document.getElementById('dDelete').addEventListener('click', function(){ var oid = detailId; closeDetails(); doDelete(oid); });
 
     // add attendee (manual / paid via another channel)
     document.getElementById('addBtn').addEventListener('click', function(){
