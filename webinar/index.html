@@ -189,7 +189,7 @@ class Component extends DCLogic {
       const res = await fetch(this.WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: f.name.trim(), email: f.email.trim(), phone: d, seats: 1, return_url: returnUrl }),
+        body: JSON.stringify({ name: f.name.trim(), email: f.email.trim(), phone: d, seats: 1, source: f.source || '', return_url: returnUrl }),
       });
       const data = await res.json();
       if (!res.ok || !data.payment_session_id) throw new Error(data.error || 'Could not start payment. Please try again.');

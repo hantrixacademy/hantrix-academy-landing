@@ -120,6 +120,7 @@
       <div class="drow"><span class="dk">Email</span><span class="dv" id="dEmail"></span></div>
       <div class="drow"><span class="dk">Amount</span><span class="dv" id="dAmount"></span></div>
       <div class="drow"><span class="dk">Registered</span><span class="dv" id="dDate"></span></div>
+      <div class="drow"><span class="dk">Heard via</span><span class="dv" id="dSource"></span></div>
       <div class="drow"><span class="dk">Booking ID</span><span class="dv" id="dOid" style="font-size:11px; color:#999; font-weight:400;"></span></div>
       <div style="margin-top:6px;">
         <label>Notes <span class="save-hint">(saves automatically)</span></label>
@@ -253,6 +254,7 @@
       document.getElementById('dEmail').textContent = r.email || '—';
       document.getElementById('dAmount').textContent = '₹' + (r.amount || 0);
       document.getElementById('dDate').textContent = fmtDate(r.created_at);
+      document.getElementById('dSource').textContent = r.source || '—';
       document.getElementById('dOid').textContent = r.order_id;
       document.getElementById('dNotes').value = r.notes || '';
       document.getElementById('detailModal').classList.add('show');
@@ -328,9 +330,9 @@
     });
 
     function exportCSV() {
-      var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered','Notes'];
+      var head = ['Name','Phone','Email','Amount','Status','CheckedIn','CheckedInAt','Registered','HeardVia','Notes'];
       var lines = [head.join(',')].concat(ALL.map(function(r){
-        return [r.name,r.phone,r.email,r.amount,r.status,r.checked_in?'Yes':'No',r.checked_in_at||'',r.created_at,r.notes||''].map(function(v){
+        return [r.name,r.phone,r.email,r.amount,r.status,r.checked_in?'Yes':'No',r.checked_in_at||'',r.created_at,r.source||'',r.notes||''].map(function(v){
           v = (v==null?'':String(v)); return '"'+v.replace(/"/g,'""')+'"';
         }).join(',');
       }));
