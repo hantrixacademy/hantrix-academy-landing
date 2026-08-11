@@ -470,19 +470,6 @@
       renderPrices();
     });
 
-    // ── Lead capture (fire-and-forget, before payment) ──────────
-    var LEADS_URL = 'https://api.hantrixacademy.com/api/leads';
-    function captureLead(name, email, phone) {
-      try {
-        fetch(LEADS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name, email: email, phone: phone, status: 'interested', stage: 'contact' }),
-          keepalive: true
-        }).catch(function () {});
-      } catch (e) {}
-    }
-
     // ── Cashfree payment ─────────────────────────────────────────
     var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
     function showPayErr(msg) { payErr.textContent = msg; payErr.style.display = ''; }
@@ -538,8 +525,6 @@
         return;
       }
       var nm = nameEl.value.trim(), em = emailEl.value.trim(), ph = digits();
-      // record the lead first so an abandoned payment is still captured
-      captureLead(nm, em, ph);
       initiatePayment(nm, em, ph);
     });
 
