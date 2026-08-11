@@ -315,28 +315,52 @@
     });
 
     // ── Lead capture ──────────────────────────────────────────────
-    // The moment someone submits a valid checkout form we record them as a
-    // lead in the LMS admin (Students → Leads), BEFORE the payment redirect —
-    // so an abandoned checkout still shows up for follow-up. Upserts by email
-    // on the backend, so it never creates duplicates. Fire-and-forget:
-    // it must never block, slow, or fail the payment.
+    // Everyone who types their details here lands in the LMS admin under
+    // Students → Leads, whether or not they go on to pay — someone who fills
+    // the form and leaves is exactly who the team wants to follow up.
+    //
+    // Sent as they leave each field (once there's enough to act on) and again
+    // when they reach payment. The backend upserts by email and only writes
+    // the fields it's given, so repeat calls build up one record rather than
+    // duplicates. Fire-and-forget throughout: this must never block, slow, or
+    // fail the payment.
     var LEADS_URL = 'https://api.hantrixacademy.com/api/leads';
-    function captureLead(name, email, phone) {
+    var lastCapture = '';
+
+    // 'contact' — details typed in · 'complete' — reached the payment gateway
+    function captureLead(stage) {
+      var name = nameEl.value.trim();
+      var email = emailEl.value.trim();
+      // Without a name and a working email there's nothing to follow up on.
+      if (name.length < 2 || !EMAIL_RE.test(email)) return;
+
+      var payload = {
+        name: name.slice(0, 80),
+        email: email.slice(0, 120),
+        // this form is India-only; store it the way the app does
+        phone: /^[6-9]\d{9}$/.test(phoneEl.value) ? '+91 ' + phoneEl.value : '',
+        status: 'interested',  // they're on the checkout page, after all
+        stage: stage,
+        source: 'landing'
+      };
+
+      var key = JSON.stringify(payload);
+      if (key === lastCapture) return;  // nothing has changed since last time
+      lastCapture = key;
+
       try {
         fetch(LEADS_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            phone: phone,
-            status: 'interested', // shows in admin as an interested lead
-            stage: 'contact'      // captured at the contact step
-          }),
-          keepalive: true          // still sent as the page navigates to Cashfree
+          body: JSON.stringify(payload),
+          keepalive: true   // still sent as the page navigates to Cashfree
         }).catch(function () {});
       } catch (e) {}
     }
+
+    [nameEl, emailEl, phoneEl].forEach(function (el) {
+      el.addEventListener('blur', function () { captureLead('contact'); });
+    });
 
     // ── Cashfree payment (same worker + flow as checkoutpagehantrix) ──
     var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
@@ -407,9 +431,8 @@
       }
       // all valid — record the lead first (so an abandoned payment is still
       // captured), then create the Cashfree order and open the payment page
-      var nm = nameEl.value.trim(), em = emailEl.value.trim(), ph = phoneEl.value;
-      captureLead(nm, em, ph);
-      initiatePayment(nm, em, ph, this);
+      captureLead('complete');
+      initiatePayment(nameEl.value.trim(), emailEl.value.trim(), phoneEl.value, this);
     });
   </script>
 </body>
