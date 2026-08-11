@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout — Hantrix Academy</title>
   <link rel="icon" type="image/png" href="assets/Favicon.png">
-  <!-- Cashfree Web SDK (same as checkoutpagehantrix) -->
+  <!-- Cashfree Web SDK -->
   <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
   <!-- Meta Pixel -->
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1563397922104537');fbq('track','PageView');</script>
@@ -14,403 +14,513 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ===== Tokens copied from the main landing page ===== */
-    :root {
+    /* ===== Ported from Hantrix_CORE /checkout design ===== */
+    .co-page {
       --orange: #f7941d;
-      --bg: #f5f5f5;
-      --white: #ffffff;
+      --orange-hover: #d97c0b;
       --peach: #fdf0e0;
-      --text: #000000;
-      --text-muted: rgba(0, 0, 0, 0.5);
-      --text-faint: rgba(0, 0, 0, 0.3);
-      --text-soft: rgba(0, 0, 0, 0.7);
-      --border-light: rgba(0, 0, 0, 0.1);
-      --border-medium: rgba(0, 0, 0, 0.2);
-      --dark: #141210;
-      --r-card: 20px;
+      --bg: #f5f5f5;
+      --panel: #f0efee;
+      --white: #fff;
+      --muted: rgba(0,0,0,.5);
+      --soft: rgba(0,0,0,.7);
+      --line: rgba(0,0,0,.1);
+      --err: #E50000;
+      --err-soft: #FEF1F1;
       --r-card-sm: 12px;
       --r-pill: 62px;
-      --shadow-btn: 0px 11px 13px -5px rgba(0, 0, 0, 0.2);
-      --shadow-btn-inset: inset 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
-      --shadow-card: 0px 11px 13px -5px rgba(0, 0, 0, 0.1);
+      --shadow-btn: 0px 11px 13px -5px rgba(0,0,0,.2);
+      --shadow-btn-inset: inset 0px 2px 0px 0px rgba(0,0,0,.25);
+
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      background: var(--bg); color: #000;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-content: start;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { margin: 0; padding: 0; }
+    .co-page *, .co-page *::before, .co-page *::after { box-sizing: border-box; }
     html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    body { font-family: "Plus Jakarta Sans", sans-serif; background: var(--bg); color: var(--text); }
-    a { color: inherit; text-decoration: none; }
-    img { display: block; max-width: 100%; }
-    button, input { font-family: inherit; }
-    button { cursor: pointer; border: none; background: none; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .co-page h1, .co-page p { margin: 0; }
+    .co-page a { color: var(--orange); text-decoration: none; }
+    .co-page a:hover { color: var(--orange-hover); }
+    .co-page img { display: block; max-width: 100%; }
 
-    /* ===== Buttons — same recipe as .btn-primary ===== */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 11px 22px; border-radius: var(--r-pill);
-      font-weight: 500; font-size: 14px; line-height: 1.2;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    .co-brandrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .co-mob { display: none; }
+
+    /* ── Left panel ─────────────────────────────────────────────── */
+    .co-aside {
+      background: var(--panel); padding: 36px 40px;
+      display: flex; flex-direction: column; gap: 26px; min-height: 100vh;
     }
-    .btn-primary { background: var(--orange); color: var(--white); box-shadow: var(--shadow-btn), var(--shadow-btn-inset); }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0px 14px 16px -5px rgba(0, 0, 0, 0.25), var(--shadow-btn-inset); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-outline { background: var(--white); color: var(--text); border: 1px solid var(--border-light); }
-    .btn-outline:hover { background: rgba(0, 0, 0, 0.03); }
-
-    /* ===== Top bar — sits on the main background, no bar/border ===== */
-    .topbar { background: transparent; }
-    .topbar__in { max-width: 1120px; margin: 0 auto; padding: 22px 24px 4px; display: flex; align-items: center; justify-content: space-between; }
-    .topbar img { height: 40px; width: auto; }
-    .topbar .secure { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--text-muted); }
-
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 22px 24px 28px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 38px; align-items: start; }
-
-    /* ===== Glassy card — same look as .pain-card / .join-card ===== */
-    .card {
-      background: rgba(255, 255, 255, 0.6);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      border-radius: 22px;
-      box-shadow: var(--shadow-card);
-      padding: 18px;
+    .co-aside > * { width: 100%; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .co-aside > a { align-self: center; }
+    .co-brandrow img { height: 40px; width: auto; }
+    .co-enrol {
+      background: var(--bg); border: 1px solid rgba(0,0,0,.06);
+      border-radius: 30px; padding: 24px 22px;
+      box-shadow: 0px 11px 13px -5px rgba(0,0,0,.06);
+      width: 100%; max-width: 560px; margin: 0 auto;
     }
-    .right > * + * { margin-top: 13px; }
-    .card h3 { font-size: 17px; font-weight: 500; margin-bottom: 13px; }
+    .co-course {
+      font-size: 26px; font-weight: 500; letter-spacing: -.5px;
+      line-height: 1.22; margin: 0;
+    }
+    .co-tagline { font-size: 13px; color: var(--muted); margin-top: 8px; }
 
-    /* ---------- LEFT ---------- */
-    .back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--orange); margin-bottom: 12px; }
-    .left h1 { font-size: 26px; font-weight: 500; line-height: 1.2; }
-    .left .sub { margin-top: 6px; font-size: 13px; color: var(--text-muted); }
+    .co-slot {
+      margin-top: 18px; border-radius: 20px; min-height: 200px;
+      background: var(--peach);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      box-shadow: 0px 8px 12px -6px rgba(0,0,0,.07);
+    }
+    .co-slot img { height: 56px; width: auto; object-fit: contain; }
 
-    /* course thumbnail */
-    .thumb {
-      position: relative; overflow: hidden; margin-top: 15px;
-      border-radius: 22px; padding: 64px 22px 60px; text-align: center;
+    .co-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .co-stat {
+      background: var(--white); border-radius: 16px; padding: 14px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      box-shadow: 0px 8px 12px -6px rgba(0,0,0,.06);
+    }
+    .co-stat-val { font-size: 17px; font-weight: 600; letter-spacing: -.3px; text-align: center; }
+    .co-stat-label { font-size: 11px; color: var(--muted); text-align: center; }
+
+    .co-lines-card {
+      background: var(--white); border-radius: 20px; padding: 18px; margin-top: 10px;
+      box-shadow: 0px 8px 12px -6px rgba(0,0,0,.07);
+    }
+    .co-lines { display: flex; flex-direction: column; gap: 9px; font-size: 13px; color: var(--soft); }
+    .co-line { display: flex; justify-content: space-between; }
+    .co-line.off { color: var(--orange); font-weight: 600; }
+    .co-total {
+      display: flex; align-items: baseline; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .co-total-label { font-size: 13px; color: var(--muted); }
+    .co-total-note { font-size: 11px; color: rgba(0,0,0,.38); }
+    .co-total-amt { display: flex; align-items: baseline; gap: 10px; }
+    .co-total-amt s { font-size: 15px; color: rgba(0,0,0,.38); }
+    .co-total-amt b { font-size: 30px; font-weight: 600; letter-spacing: -1px; }
+
+    /* ── Form ───────────────────────────────────────────────────── */
+    .co-main {
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 48px 64px;
+    }
+    .co-form {
+      width: 100%; max-width: 520px;
+      position: sticky; top: 48px;
+    }
+    .co-form h1 { font-size: 38px; font-weight: 500; line-height: 1.2; margin-bottom: 6px; letter-spacing: -.6px; }
+    .co-form > p { font-size: 15px; color: var(--muted); margin-bottom: 26px; }
+
+    .co-fields { display: flex; flex-direction: column; gap: 6px; }
+    .co-label { font-size: 11px; font-weight: 500; letter-spacing: .6px; color: var(--soft); }
+    .co-input + .co-label, .co-phone + .co-label, .co-err + .co-label { margin-top: 12px; }
+    .co-input {
+      width: 100%; padding: 13px 15px; background: var(--white);
+      border: 1px solid var(--line); border-radius: var(--r-card-sm);
+      font-family: inherit; font-size: 15px; color: #000;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .co-input::placeholder { color: rgba(0,0,0,.3); }
+    .co-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247,148,29,.12); }
+    .co-phone { display: flex; gap: 8px; }
+    .co-country {
+      display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+      padding: 13px 12px; background: var(--white);
+      border: 1px solid var(--line); border-radius: var(--r-card-sm);
+      font-family: inherit; font-size: 15px; color: #000; white-space: nowrap;
+    }
+    .co-country .flag { font-size: 16px; line-height: 1; }
+    .co-country svg { opacity: .5; }
+    .co-note { font-size: 12px; color: rgba(0,0,0,.4); margin-top: 8px; }
+    .co-input.invalid { border-color: var(--err); }
+    .co-input.invalid:focus { border-color: var(--err); box-shadow: 0 0 0 3px rgba(229,0,0,.12); }
+    .co-err { font-size: 12px; font-weight: 500; color: var(--err); margin-top: 5px; }
+
+    .co-coupon { display: flex; gap: 8px; margin-top: 22px; }
+    .co-coupon .co-input { padding: 12px 15px; font-size: 14px; }
+    .co-apply {
+      padding: 12px 22px; border: 1px solid var(--line); background: var(--white);
+      color: #000; font-family: inherit; font-size: 14px; font-weight: 500;
+      border-radius: var(--r-pill); cursor: pointer; white-space: nowrap;
+      transition: background .2s;
+    }
+    .co-apply:hover { background: var(--bg); }
+    .co-coupon-msg { font-size: 12px; font-weight: 500; margin-top: 8px; }
+    .co-coupon-msg.ok { color: var(--orange); }
+    .co-coupon-msg.bad { color: var(--err); }
+
+    .co-pay {
+      margin-top: 20px; width: 100%; padding: 12px; border: none; cursor: pointer;
+      background: var(--orange); color: #fff; font-size: 16px; font-weight: 500;
+      font-family: inherit; border-radius: var(--r-pill);
+      box-shadow: var(--shadow-btn), var(--shadow-btn-inset);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .co-pay:hover {
+      transform: translateY(-1px);
+      box-shadow: 0px 14px 16px -5px rgba(0,0,0,.25), var(--shadow-btn-inset);
+    }
+    .co-pay[disabled] { opacity: .75; cursor: default; transform: none; }
+
+    /* ── Accepted payment methods ───────────────────────────────── */
+    .co-pm { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+    .co-pm-card {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: var(--dark) radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1.5px);
-      background-size: 12px 12px;
-      box-shadow: var(--shadow-card);
+      gap: 1px; min-width: 62px; height: 40px; padding: 0 12px;
+      background: var(--white); border: 1px solid rgba(0,0,0,.09);
+      border-radius: var(--r-card-sm);
     }
-    .thumb::after { content: ""; position: absolute; left: -14%; right: -14%; bottom: -28px; height: 52px; background: var(--orange); border-radius: 50%; z-index: 1; }
-    .thumb__logo { position: relative; z-index: 2; font-size: 13px; font-weight: 800; letter-spacing: 3px; color: #fff; }
-    .thumb__logo span { color: var(--orange); }
-    .thumb__logo small { display: block; font-size: 7px; letter-spacing: 4px; font-weight: 600; color: rgba(255,255,255,0.7); margin-top: 2px; }
-    .thumb__intl { position: relative; z-index: 2; margin-top: 13px; font-size: 18px; font-weight: 700; letter-spacing: 2px; color: #fff; }
-    .thumb__drop { position: relative; z-index: 2; font-size: 26px; font-weight: 800; letter-spacing: 1px; color: var(--orange); line-height: 1.1; }
-    .thumb__badge { position: relative; z-index: 2; display: inline-block; margin-top: 11px; padding: 7px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #fff; border: 1.5px solid rgba(255, 255, 255, 0.55); border-radius: 7px; }
+    .co-pm-upi { font-size: 14px; font-weight: 800; color: #5b5b5b; letter-spacing: -.4px; }
+    .co-pm-upi-sub { font-size: 4.5px; font-weight: 600; letter-spacing: .3px; color: rgba(0,0,0,.45); }
+    .co-pm-visa { font-size: 15px; font-weight: 800; font-style: italic; color: #1a1f71; letter-spacing: -.3px; }
+    .co-pm-mc { position: relative; display: flex; align-items: center; }
+    .co-pm-mc i { width: 17px; height: 17px; border-radius: 50%; display: block; }
+    .co-pm-mc-a { background: #eb001b; }
+    .co-pm-mc-b { background: #f79e1b; margin-left: -6px; }
+    .co-pm-rupay { font-size: 14px; font-weight: 800; letter-spacing: -.3px; }
+    .co-pm-rupay b { color: #097a3d; }
+    .co-pm-rupay em { color: #f7941d; font-style: normal; }
+    .co-pm-gpay { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 500; color: #5f6368; }
 
-    /* feature list — glassy card, inner rows */
-    .features { margin-top: 13px; padding: 2px 18px; }
-    .feat { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
-    .feat:last-child { border-bottom: none; }
-    .feat__ico { width: 36px; height: 36px; flex-shrink: 0; border-radius: 11px; border: 1.5px solid rgba(247, 148, 29, 0.4); background: rgba(247, 148, 29, 0.09); display: flex; align-items: center; justify-content: center; color: var(--orange); }
-    .feat__ico svg { width: 18px; height: 18px; }
-    .feat__t { font-size: 13.5px; font-weight: 500; }
-    .feat__s { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    .co-redirect { font-size: 11px; color: rgba(0,0,0,.45); text-align: center; margin-top: 10px; }
+    .co-notice {
+      margin-top: 12px; padding: 12px 14px; border-radius: var(--r-card-sm);
+      background: var(--err-soft); color: var(--err);
+      font-size: 13px; font-weight: 500; line-height: 1.5;
+    }
 
-    .guarantee { margin-top: 12px; display: flex; align-items: flex-start; gap: 9px; padding-left: 4px; }
-    .guarantee__c { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .guarantee__t { font-size: 13px; font-weight: 600; }
-    .guarantee__s { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .co-foot {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line);
+      font-size: 13px; gap: 16px;
+    }
+    .co-foot .co-back { color: var(--muted); }
+    .co-foot .co-back:hover { color: #000; }
 
-    /* ---------- RIGHT — form fields ---------- */
-    .field { margin-bottom: 12px; }
-    .field:last-child { margin-bottom: 0; }
-    .field > label { display: block; font-size: 12px; font-weight: 500; color: var(--text-soft); margin-bottom: 6px; }
-    .field input { width: 100%; padding: 10px 13px; font-size: 14px; background: var(--white); border: 1px solid var(--border-light); border-radius: var(--r-card-sm); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
-    .field input::placeholder { color: var(--text-faint); }
-    .field input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247, 148, 29, 0.12); }
-    .field .err { display: none; font-size: 11.5px; color: #e11d48; margin-top: 5px; }
-    .field.invalid input { border-color: #e11d48; }
-    .field.invalid .phone { border-color: #e11d48; }
-    .field.invalid .err { display: block; }
+    /* ── Phone: single-column stack ─────────────────────────────── */
+    @media (max-width: 900px) {
+      .co-desk { display: none; }
+      .co-mob { display: block; }
 
-    .phone { display: flex; background: var(--white); border: 1px solid var(--border-light); border-radius: var(--r-card-sm); overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; }
-    .phone:focus-within { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247, 148, 29, 0.12); }
-    .phone .cc { display: flex; align-items: center; gap: 5px; padding: 0 11px; font-size: 13px; font-weight: 500; background: #fafafa; border-right: 1px solid var(--border-light); }
-    .phone input { flex: 1; border: none; outline: none; padding: 10px 13px; font-size: 14px; background: transparent; }
+      .co-secure-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+      .co-secure-chip i { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
 
-    /* order summary */
-    .sum-course { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-light); }
-    .mini-thumb { width: 54px; height: 44px; border-radius: 9px; flex-shrink: 0; background: var(--dark) radial-gradient(rgba(255,255,255,0.08) 0.8px, transparent 0.8px); background-size: 7px 7px; display: flex; align-items: center; justify-content: center; }
-    .mini-thumb img { width: 38px; height: auto; display: block; }
-    .sum-course__n { flex: 1; font-size: 13px; font-weight: 500; line-height: 1.3; }
-    .sum-course__p { display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
-    .sum-course__p .now { font-size: 13px; font-weight: 600; }
-    .sum-course__p .was { font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.38); text-decoration: line-through; text-decoration-thickness: 1.5px; }
-    .srow { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-top: 10px; }
-    .srow .lbl { color: var(--text-muted); }
-    .srow.discount .lbl, .srow.discount .val { color: var(--orange); }
-    .srow.discount .lbl { display: inline-flex; align-items: center; gap: 8px; }
-    .off-badge { border: 1.5px solid var(--orange); color: var(--orange); font-weight: 800; font-size: 11px; letter-spacing: 0.01em; padding: 3px 9px; border-radius: 9px; }
-    .total { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
-    .total .tl { font-size: 16px; font-weight: 500; }
-    .total .tl small { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
-    .total .tv { font-size: 21px; font-weight: 600; }
+      .co-aside { background: var(--bg); }
+      .co-enrol { background: var(--panel); border-radius: 24px; padding: 16px; }
+      .co-course { font-size: 19px; letter-spacing: -.3px; line-height: 1.25; }
+      .co-tagline { font-size: 12px; margin-top: 4px; }
+      .co-slot { min-height: 120px; margin-top: 12px; border-radius: 18px; }
+      .co-slot img { height: 40px; }
+      .co-stats { display: none; }
 
-    .secure-box { display: flex; align-items: center; gap: 11px; background: var(--peach); border: 1px solid rgba(247, 148, 29, 0.2); border-radius: var(--r-card); padding: 11px 14px; box-shadow: var(--shadow-card); }
-    .secure-box svg { width: 22px; height: 22px; color: var(--orange); flex-shrink: 0; }
-    .secure-box__t { font-size: 13px; font-weight: 600; }
-    .secure-box__s { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+      .co-fields, .co-mob-lines {
+        background: var(--white); border-radius: 20px; padding: 18px;
+        box-shadow: 0px 11px 13px -5px rgba(0,0,0,.1);
+      }
+      .co-coupon { background: var(--white); border-radius: 20px 20px 0 0; padding: 18px 18px 0; margin-top: 12px; }
+      .co-coupon-msg { background: var(--white); padding: 7px 18px 0; margin-top: 0; }
+      .co-mob-lines { border-radius: 0 0 20px 20px; padding-top: 14px; margin-top: 0; }
+      .co-form > h1 { font-size: 26px; }
 
-    .proceed { padding: 13px; font-size: 16px; box-shadow: var(--shadow-btn), var(--shadow-btn-inset), 0 12px 22px -8px rgba(247,148,29,0.5); }
-    .proceed[disabled] { opacity: 0.7; cursor: default; }
-    .pay-err { display: none; margin-top: 10px; font-size: 12.5px; color: #e11d48; text-align: center; }
-    .pay-err.show { display: block; }
+      .co-assure-card {
+        background: var(--peach); border: 2px solid rgba(255,255,255,.6);
+        border-radius: 18px; padding: 13px 16px; margin-top: 12px;
+      }
+      .co-assure-title { display: block; font-size: 13px; font-weight: 600; }
+      .co-assure-sub { display: block; font-size: 12px; color: rgba(0,0,0,.6); margin-top: 1px; }
 
-    .paylogos { margin-top: 13px; display: flex; align-items: center; justify-content: center; gap: 17px; flex-wrap: wrap; }
-    .paylogos span { font-size: 12px; font-weight: 800; letter-spacing: 0.3px; opacity: 0.8; }
-    .mc { display: inline-flex; }
-    .mc i { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
-    .mc i:first-child { background: #eb001b; }
-    .mc i:last-child { background: #f79e1b; margin-left: -7px; opacity: 0.9; }
+      .co-help {
+        display: flex; flex-direction: column; align-items: center; gap: 10px;
+        margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line);
+      }
+      .co-help-q { font-size: 13px; color: rgba(0,0,0,.55); text-align: center; }
+      .co-help-cta {
+        display: inline-flex; align-items: center; gap: 9px;
+        background: var(--peach); border: 1px solid rgba(247,148,29,.3);
+        border-radius: var(--r-pill); padding: 11px 20px;
+        font-size: 13px; font-weight: 600;
+      }
+      .co-page a.co-help-cta { color: #000; }
+      .co-help-cta i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+      .co-help-note { font-size: 11px; color: rgba(0,0,0,.4); }
 
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; gap: 32px; }
-      .left h1 { font-size: 28px; }
+      .co-page { grid-template-columns: 1fr; }
+      .co-aside { min-height: 0; padding: 24px 18px 0; gap: 12px; }
+      .co-main { padding: 12px 18px 28px; align-items: flex-start; }
+      .co-form { position: static; }
+      .co-form > p { margin-bottom: 14px; }
+      .co-enrol, .co-aside > * { max-width: none; margin-left: 0; margin-right: 0; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar__in">
-      <a href="index.html"><img src="assets/logo.png" alt="Hantrix Academy" /></a>
-      <span class="secure">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        Secure Checkout
-      </span>
-    </div>
-  </header>
+  <div class="co-page">
 
-  <main class="wrap">
-    <div class="grid">
-      <!-- LEFT -->
-      <div class="left">
-        <a class="back" href="index.html">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Back to Home
-        </a>
-        <h1>International Dropshipping<br />Full Course</h1>
-        <p class="sub">Master International Dropshipping Step-by-Step</p>
-
-        <div class="thumb">
-          <div class="thumb__logo">HANTRI<span>X</span><small>ACADEMY</small></div>
-          <div class="thumb__intl">INTERNATIONAL</div>
-          <div class="thumb__drop">DROPSHIPPING</div>
-          <div class="thumb__badge">FULL COURSE</div>
-        </div>
-
+    <!-- ── Summary panel ────────────────────────────────────────── -->
+    <aside class="co-aside">
+      <div class="co-brandrow">
+        <a href="index.html" aria-label="Hantrix Academy"><img src="assets/logo.png" alt="Hantrix Academy" /></a>
+        <span class="co-secure-chip co-mob"><i></i>Secure</span>
       </div>
 
-      <!-- RIGHT -->
-      <div class="right">
-        <!-- contact -->
-        <div class="card">
-          <h3>Your Details</h3>
+      <div class="co-enrol">
+        <h2 class="co-course">International Dropshipping Full Course</h2>
+        <p class="co-tagline">Master International Dropshipping Step-by-Step</p>
 
-          <div class="field" id="f-name">
-            <label for="name">Full Name</label>
-            <input id="name" type="text" autocomplete="name" placeholder="Enter your full name" />
-            <span class="err">Please enter your full name.</span>
-          </div>
-
-          <div class="field" id="f-email">
-            <label for="email">Email Address</label>
-            <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" />
-            <span class="err">Please enter a valid email address.</span>
-          </div>
-
-          <div class="field" id="f-wa">
-            <label for="phone">WhatsApp Number</label>
-            <div class="phone">
-              <span class="cc">🇮🇳 +91
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </span>
-              <input id="phone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" placeholder="10-digit WhatsApp number" />
-            </div>
-            <span class="err">Enter a valid 10-digit WhatsApp number.</span>
-          </div>
+        <div class="co-slot">
+          <img src="assets/logo.png" alt="Hantrix Academy" />
         </div>
 
-        <!-- summary -->
-        <div class="card">
-          <h3>Order Summary</h3>
-          <div class="sum-course">
-            <span class="mini-thumb"><img src="assets/footer-logo.png" alt="Hantrix Academy" /></span>
-            <span class="sum-course__n">International Dropshipping Full Course</span>
-            <span class="sum-course__p"><span class="was">₹26,000</span><span class="now">₹16,999</span></span>
-          </div>
-          <div class="srow"><span class="lbl">Subtotal</span><span class="val">₹26,000</span></div>
-          <div class="srow discount"><span class="lbl">Discount <span class="off-badge">35% OFF</span></span><span class="val">- ₹9,001</span></div>
-          <div class="total">
-            <span class="tl">Total Amount<small>Inclusive of all taxes</small></span>
-            <span class="tv">₹16,999</span>
-          </div>
+        <div class="co-stats">
+          <div class="co-stat"><span class="co-stat-val">Weekly</span><span class="co-stat-label">Live mentor calls</span></div>
+          <div class="co-stat"><span class="co-stat-val">Lifetime</span><span class="co-stat-label">Course access</span></div>
+          <div class="co-stat"><span class="co-stat-val">24/7</span><span class="co-stat-label">Support</span></div>
         </div>
 
-        <!-- secure note -->
-        <div class="secure-box">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
-          <div><div class="secure-box__t">100% Secure Payments</div><div class="secure-box__s">Your payment information is encrypted and safe.</div></div>
+        <div class="co-lines-card co-desk" id="priceDesk"></div>
+      </div>
+    </aside>
+
+    <!-- ── Form ─────────────────────────────────────────────────── -->
+    <main class="co-main">
+      <div class="co-form">
+        <h1>Checkout</h1>
+        <p>Confirm your details — payment happens on our secure gateway.</p>
+
+        <div class="co-fields">
+          <label class="co-label" for="co-name">FULL NAME</label>
+          <input id="co-name" class="co-input" placeholder="Arjun Mehta" autocomplete="name" />
+          <span class="co-err" id="err-name" style="display:none"></span>
+
+          <label class="co-label" for="co-email">EMAIL</label>
+          <input id="co-email" class="co-input" type="email" placeholder="sample@hantrix.com" autocomplete="email" />
+          <span class="co-err" id="err-email" style="display:none"></span>
+
+          <label class="co-label" for="co-phone">WHATSAPP NUMBER</label>
+          <div class="co-phone">
+            <span class="co-country" aria-label="Country India +91">
+              <span class="flag">🇮🇳</span> +91
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+            <input id="co-phone" class="co-input" type="tel" inputmode="numeric" placeholder="98765 43210" autocomplete="tel" />
+          </div>
+          <span class="co-err" id="err-phone" style="display:none"></span>
+          <span class="co-note">Course access is tied to this email and number.</span>
         </div>
 
-        <!-- proceed -->
-        <button class="btn btn-primary proceed" id="payBtn">Proceed to Pay ₹16,999</button>
-        <p class="pay-err" id="payErr"></p>
+        <div class="co-coupon">
+          <input id="co-coupon" class="co-input" placeholder="Coupon code" aria-label="Coupon code" />
+          <button type="button" class="co-apply" id="couponApply">Apply</button>
+        </div>
+        <p class="co-coupon-msg" id="couponMsg" style="display:none"></p>
 
-        <div class="paylogos">
-          <span style="color:#5b6770; font-style:italic;">UPI))</span>
-          <span style="color:#00b9f1;">Pay<span style="color:#002970;">tm</span></span>
-          <span style="color:#1a1f71;">VISA</span>
-          <span class="mc"><i></i><i></i></span>
-          <span style="color:#0a4595; font-style:italic;">RuPay»</span>
-          <span style="color:#4285f4;">G Pay</span>
+        <!-- on a phone the breakdown belongs next to the coupon -->
+        <div class="co-mob co-mob-lines" id="priceMob"></div>
+
+        <div class="co-mob co-assure-card">
+          <span class="co-assure-title">100% Secure Payments</span>
+          <span class="co-assure-sub">Encrypted and safe — UPI, card, net banking, EMI.</span>
+        </div>
+
+        <button type="button" class="co-pay" id="payBtn">Pay ₹16,999</button>
+        <div class="co-notice" id="payErr" style="display:none"></div>
+        <p class="co-redirect">Secure gateway · UPI, card, net banking &amp; EMI</p>
+
+        <div class="co-pm" aria-label="Accepted payment methods">
+          <span class="co-pm-card">
+            <span class="co-pm-upi">UPI</span>
+            <span class="co-pm-upi-sub">UNIFIED PAYMENTS INTERFACE</span>
+          </span>
+          <span class="co-pm-card"><span class="co-pm-visa">VISA</span></span>
+          <span class="co-pm-card">
+            <span class="co-pm-mc" aria-label="Mastercard"><i class="co-pm-mc-a"></i><i class="co-pm-mc-b"></i></span>
+          </span>
+          <span class="co-pm-card"><span class="co-pm-rupay"><b>Ru</b><em>Pay</em></span></span>
+          <span class="co-pm-card">
+            <span class="co-pm-gpay">
+              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21.6 12.2c0-.7-.06-1.4-.18-2.05H12v3.9h5.4a4.6 4.6 0 01-2 3v2.5h3.24c1.9-1.75 3-4.33 3-7.35z" fill="#4285F4" />
+                <path d="M12 22c2.7 0 4.97-.9 6.63-2.43l-3.23-2.5c-.9.6-2.05.95-3.4.95-2.6 0-4.8-1.76-5.6-4.12H3.07v2.58A10 10 0 0012 22z" fill="#34A853" />
+                <path d="M6.4 13.9a6 6 0 010-3.83V7.5H3.07a10 10 0 000 9l3.33-2.6z" fill="#FBBC05" />
+                <path d="M12 5.95c1.47 0 2.79.5 3.83 1.5l2.87-2.87C16.96 2.98 14.7 2 12 2A10 10 0 003.07 7.5L6.4 10.1C7.2 7.7 9.4 5.95 12 5.95z" fill="#EA4335" />
+              </svg>
+              Pay
+            </span>
+          </span>
+          <span class="co-pm-card">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.65)" stroke-width="1.7" aria-label="Net banking">
+              <path d="M3 9.5 12 4l9 5.5" stroke-linejoin="round" />
+              <path d="M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20h18" stroke-linecap="round" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="co-mob co-help">
+          <span class="co-help-q">Still have doubts about the course?</span>
+          <a class="co-help-cta" href="https://wa.me/919074174802?text=Hi%2C%20I%20have%20a%20question%20about%20the%20International%20Dropshipping%20Full%20Course." target="_blank" rel="noopener noreferrer">
+            <i></i>Chat with us on WhatsApp
+          </a>
+          <span class="co-help-note">Typically replies within 5 minutes · 9am–9pm IST</span>
+        </div>
+
+        <div class="co-foot co-desk">
+          <a class="co-back" href="index.html">← Back to Home</a>
+          <a href="https://wa.me/919074174802?text=Hi%2C%20I%20have%20a%20question%20about%20enrolling%20in%20the%20International%20Dropshipping%20Full%20Course." target="_blank" rel="noopener noreferrer">Talk to an advisor</a>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script>
-    var nameEl = document.getElementById('name');
-    var emailEl = document.getElementById('email');
-    var phoneEl = document.getElementById('phone');
+    // ── Pricing ──────────────────────────────────────────────────
+    var LIST_PRICE = 26000, BASE_PRICE = 16999;
+    var VALID_COUPONS = {};           // no coupons exist yet — every code is rejected
+    var appliedOff = 0;
+    function inr(n) { return '₹' + n.toLocaleString('en-IN'); }
+    function payable() { return BASE_PRICE - appliedOff; }
+
+    function priceBlockHTML() {
+      var coupon = appliedOff
+        ? '<span class="co-line off"><span>Coupon</span><span>− ' + inr(appliedOff) + '</span></span>'
+        : '';
+      return '' +
+        '<div class="co-lines">' +
+          '<span class="co-line"><span>Subtotal</span><span>' + inr(LIST_PRICE) + '</span></span>' +
+          '<span class="co-line off"><span>Launch discount</span><span>− ' + inr(LIST_PRICE - BASE_PRICE) + '</span></span>' +
+          coupon +
+        '</div>' +
+        '<div class="co-total">' +
+          '<span><span class="co-total-label" style="display:block">Total payable</span>' +
+          '<span class="co-total-note">Inclusive of all taxes</span></span>' +
+          '<span class="co-total-amt"><s>' + inr(LIST_PRICE) + '</s><b>' + inr(payable()) + '</b></span>' +
+        '</div>';
+    }
+    function renderPrices() {
+      document.getElementById('priceDesk').innerHTML = priceBlockHTML();
+      document.getElementById('priceMob').innerHTML = priceBlockHTML();
+      payBtn.textContent = 'Pay ' + inr(payable());
+    }
+
+    // ── Elements ─────────────────────────────────────────────────
+    var nameEl  = document.getElementById('co-name');
+    var emailEl = document.getElementById('co-email');
+    var phoneEl = document.getElementById('co-phone');
+    var couponEl = document.getElementById('co-coupon');
+    var couponMsg = document.getElementById('couponMsg');
+    var payBtn = document.getElementById('payBtn');
+    var payErr = document.getElementById('payErr');
 
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    function digits() { return phoneEl.value.replace(/\D/g, ''); }
 
-    // keep WhatsApp number digits-only, max 10
-    phoneEl.addEventListener('input', function () {
-      phoneEl.value = phoneEl.value.replace(/\D/g, '').slice(0, 10);
-    });
-
-    // ── Prefill from the app ────────────────────────────────────────
-    // The LMS sign-up sends people here once they say they're interested,
-    // passing on the contact details they already typed. Values are only
-    // filled in, never validated on load — a red field before they've
-    // touched anything would be hostile. The params are then dropped from
-    // the URL so an email address isn't left in the address bar, in
-    // history, or in a link somebody copies.
-    (function prefill() {
+    // Prefill from query params (sign-up / links can pass these through)
+    (function () {
       var q = new URLSearchParams(location.search);
-      if (!q.has('name') && !q.has('email') && !q.has('phone')) return;
-      if (q.get('name')) nameEl.value = q.get('name').trim().slice(0, 80);
+      if (q.get('name'))  nameEl.value  = q.get('name').trim().slice(0, 80);
       if (q.get('email')) emailEl.value = q.get('email').trim().slice(0, 120);
-      // same shape the input handler enforces
-      if (q.get('phone')) phoneEl.value = q.get('phone').replace(/\D/g, '').slice(0, 10);
+      if (q.get('phone')) {
+        var d = q.get('phone').replace(/\D/g, '').slice(0, 10);
+        phoneEl.value = d.length > 5 ? d.slice(0, 5) + ' ' + d.slice(5) : d;
+      }
       history.replaceState(null, '', location.pathname + location.hash);
     })();
 
-    function fieldOf(el) { return el.closest('.field'); }
-    function setValid(el, ok) { fieldOf(el).classList.toggle('invalid', !ok); return ok; }
-
-    function checkName()  { return setValid(nameEl, nameEl.value.trim().length >= 2); }
-    function checkEmail() { return setValid(emailEl, EMAIL_RE.test(emailEl.value.trim())); }
-    function checkPhone() { return setValid(phoneEl, /^[6-9]\d{9}$/.test(phoneEl.value)); }
-
-    // validate a field once the user leaves it, and clear the error while fixing it
-    [[nameEl, checkName], [emailEl, checkEmail], [phoneEl, checkPhone]].forEach(function (pair) {
-      pair[0].addEventListener('blur', pair[1]);
-      pair[0].addEventListener('input', function () {
-        if (fieldOf(pair[0]).classList.contains('invalid')) pair[1]();
-      });
+    // Keep the WhatsApp number as a formatted 10-digit national number
+    phoneEl.addEventListener('input', function () {
+      var d = digits().slice(0, 10);
+      phoneEl.value = d.length > 5 ? d.slice(0, 5) + ' ' + d.slice(5) : d;
     });
 
-    // ── Lead capture ──────────────────────────────────────────────
-    // Everyone who types their details here lands in the LMS admin under
-    // Students → Leads, whether or not they go on to pay — someone who fills
-    // the form and leaves is exactly who the team wants to follow up.
-    //
-    // Sent as they leave each field (once there's enough to act on) and again
-    // when they reach payment. The backend upserts by email and only writes
-    // the fields it's given, so repeat calls build up one record rather than
-    // duplicates. Fire-and-forget throughout: this must never block, slow, or
-    // fail the payment.
+    // ── Validation ───────────────────────────────────────────────
+    function setErr(el, id, msg) {
+      var box = document.getElementById(id);
+      if (msg) { box.textContent = msg; box.style.display = ''; el.classList.add('invalid'); }
+      else { box.style.display = 'none'; el.classList.remove('invalid'); }
+      return !msg;
+    }
+    function checkName()  { return setErr(nameEl,  'err-name',  nameEl.value.trim().length >= 2 ? '' : 'Please enter your full name'); }
+    function checkEmail() { return setErr(emailEl, 'err-email', EMAIL_RE.test(emailEl.value.trim()) ? '' : 'Please enter a valid email address'); }
+    function checkPhone() { return setErr(phoneEl, 'err-phone', /^[6-9]\d{9}$/.test(digits()) ? '' : 'Enter the 10-digit number for India'); }
+
+    [[nameEl, checkName], [emailEl, checkEmail], [phoneEl, checkPhone]].forEach(function (pair) {
+      pair[0].addEventListener('blur', function () { if (pair[0].value) pair[1](); });
+      pair[0].addEventListener('input', function () { if (pair[0].classList.contains('invalid')) pair[1](); });
+    });
+
+    // ── Coupon (all codes rejected until a real system exists) ──
+    document.getElementById('couponApply').addEventListener('click', function () {
+      var code = couponEl.value.trim().toUpperCase();
+      couponMsg.style.display = '';
+      if (code && Object.prototype.hasOwnProperty.call(VALID_COUPONS, code)) {
+        appliedOff = VALID_COUPONS[code];
+        couponMsg.className = 'co-coupon-msg ok';
+        couponMsg.textContent = 'Coupon applied — ' + inr(appliedOff) + ' off';
+      } else {
+        appliedOff = 0;
+        couponMsg.className = 'co-coupon-msg bad';
+        couponMsg.textContent = 'That code isn’t valid. Please check and try again.';
+      }
+      renderPrices();
+    });
+
+    // ── Lead capture (fire-and-forget, before payment) ──────────
     var LEADS_URL = 'https://api.hantrixacademy.com/api/leads';
-    var lastCapture = '';
-
-    // 'contact' — details typed in · 'complete' — reached the payment gateway
-    function captureLead(stage) {
-      var name = nameEl.value.trim();
-      var email = emailEl.value.trim();
-      // Without a name and a working email there's nothing to follow up on.
-      if (name.length < 2 || !EMAIL_RE.test(email)) return;
-
-      var payload = {
-        name: name.slice(0, 80),
-        email: email.slice(0, 120),
-        // this form is India-only; store it the way the app does
-        phone: /^[6-9]\d{9}$/.test(phoneEl.value) ? '+91 ' + phoneEl.value : '',
-        status: 'interested',  // they're on the checkout page, after all
-        stage: stage,
-        source: 'landing'
-      };
-
-      var key = JSON.stringify(payload);
-      if (key === lastCapture) return;  // nothing has changed since last time
-      lastCapture = key;
-
+    function captureLead(name, email, phone) {
       try {
         fetch(LEADS_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          keepalive: true   // still sent as the page navigates to Cashfree
+          body: JSON.stringify({ name: name, email: email, phone: phone, status: 'interested', stage: 'contact' }),
+          keepalive: true
         }).catch(function () {});
       } catch (e) {}
     }
 
-    [nameEl, emailEl, phoneEl].forEach(function (el) {
-      el.addEventListener('blur', function () { captureLead('contact'); });
-    });
-
-    // ── Cashfree payment (same worker + flow as checkoutpagehantrix) ──
+    // ── Cashfree payment ─────────────────────────────────────────
     var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
-    var payErr = document.getElementById('payErr');
+    function showPayErr(msg) { payErr.textContent = msg; payErr.style.display = ''; }
+    function hidePayErr() { payErr.textContent = ''; payErr.style.display = 'none'; }
 
-    function showPayErr(msg) { payErr.textContent = msg; payErr.classList.add('show'); }
-    function hidePayErr() { payErr.textContent = ''; payErr.classList.remove('show'); }
-
-    async function initiatePayment(name, email, phone, btnEl) {
+    async function initiatePayment(name, email, phone) {
       if (window.fbq) fbq('track', 'Lead', { content_name: 'Hantrix Academy Enrollment' });
-      var original = btnEl.textContent;
-      btnEl.disabled = true;
-      btnEl.textContent = 'Please wait…';
+      var original = payBtn.textContent;
+      payBtn.disabled = true;
+      payBtn.textContent = 'Please wait…';
       hidePayErr();
       try {
         var res = await fetch(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          // Cashfree stores these customer details on the order in your account.
-          // return_url: where Cashfree sends the user back after pay/abandon.
-          // Only takes effect if the worker reads it (see note); harmless otherwise.
           body: JSON.stringify({
-            name: name,
-            email: email,
-            phone: phone,
-            return_url: location.origin + '/',
-            returnUrl: location.origin + '/'
+            name: name, email: email, phone: phone,
+            return_url: location.origin + '/success.html?order_id={order_id}',
+            returnUrl: location.origin + '/success.html?order_id={order_id}'
           })
         });
         var data = await res.json();
-        if (!res.ok || !data.payment_session_id) {
-          throw new Error(data.error || 'Payment init failed');
-        }
-        if (window.fbq) fbq('track', 'InitiateCheckout', { value: 16999, currency: 'INR', content_name: 'Hantrix Academy Enrollment' });
-        // remember this order so if the user hits "Yes, Leave" on the gateway
-        // (which just sends them back here, not to the return_url) we can show
-        // the result page for it.
+        if (!res.ok || !data.payment_session_id) throw new Error(data.error || 'Payment init failed');
+        if (window.fbq) fbq('track', 'InitiateCheckout', { value: payable(), currency: 'INR', content_name: 'Hantrix Academy Enrollment' });
+        // "Yes, Leave" on the gateway drops the user back here (not to return_url);
+        // remember the order so we can resolve it on return.
         try { sessionStorage.setItem('hntx_order', data.order_id); } catch (e) {}
         var cashfree = await Cashfree({ mode: 'production' });
         cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
       } catch (err) {
         try { sessionStorage.removeItem('hntx_order'); } catch (e) {}
         showPayErr((err && err.message) ? err.message : 'Payment failed. Please try again.');
-        btnEl.disabled = false;
-        btnEl.textContent = original;
+        payBtn.disabled = false;
+        payBtn.textContent = original;
       }
     }
 
-    // If the user returns to this page from the gateway with an order still
-    // pending (e.g. they clicked "Yes, Leave"), route them to the result page.
+    // Returning from the gateway with a pending order → resolve it.
     window.addEventListener('pageshow', function () {
       var oid;
       try { oid = sessionStorage.getItem('hntx_order'); } catch (e) { oid = null; }
@@ -420,20 +530,20 @@
       }
     });
 
-    document.getElementById('payBtn').addEventListener('click', function () {
-      // run all checks (don't short-circuit, so every bad field lights up)
+    payBtn.addEventListener('click', function () {
       var okName = checkName(), okEmail = checkEmail(), okPhone = checkPhone();
       if (!(okName && okEmail && okPhone)) {
-        hidePayErr();
-        var firstBad = document.querySelector('.field.invalid input');
+        var firstBad = document.querySelector('.co-input.invalid');
         if (firstBad) firstBad.focus();
         return;
       }
-      // all valid — record the lead first (so an abandoned payment is still
-      // captured), then create the Cashfree order and open the payment page
-      captureLead('complete');
-      initiatePayment(nameEl.value.trim(), emailEl.value.trim(), phoneEl.value, this);
+      var nm = nameEl.value.trim(), em = emailEl.value.trim(), ph = digits();
+      // record the lead first so an abandoned payment is still captured
+      captureLead(nm, em, ph);
+      initiatePayment(nm, em, ph);
     });
+
+    renderPrices();
   </script>
 </body>
 </html>
