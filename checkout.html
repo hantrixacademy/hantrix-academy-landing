@@ -541,6 +541,34 @@
       renderPrices();
     });
 
+    // ── Lead capture (Hantrix LMS admin → Students → Leads) ──────
+    // Recorded when someone submits a valid form, BEFORE handing off to the
+    // gateway — so a payment that's started and abandoned still leaves the
+    // team someone to call. Tagged as 'landing' to separate these from
+    // sign-ups made inside the app. The backend upserts by email, so this
+    // never creates duplicates. Fire-and-forget: it must never block, slow,
+    // or fail a payment.
+    var LEADS_URL = 'https://api.hantrixacademy.com/api/leads';
+
+    function captureLead(name, email, phone) {
+      try {
+        fetch(LEADS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.slice(0, 80),
+            email: email.slice(0, 120),
+            // stored the way the app stores it: dial code, space, digits
+            phone: country.dial + ' ' + phone,
+            status: 'interested',
+            stage: 'complete',
+            source: 'landing'
+          }),
+          keepalive: true   // still sent as the page navigates to Cashfree
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
     // ── Cashfree payment ─────────────────────────────────────────
     var WORKER_URL = 'https://cashfree-order.hantrixacademy.workers.dev';
     function showPayErr(msg) { payErr.textContent = msg; payErr.style.display = ''; }
@@ -596,6 +624,8 @@
         return;
       }
       var nm = nameEl.value.trim(), em = emailEl.value.trim(), ph = digits();
+      // record the lead first, so an abandoned payment is still captured
+      captureLead(nm, em, ph);
       initiatePayment(nm, em, ph);
     });
 
